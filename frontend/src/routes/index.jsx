@@ -3,19 +3,22 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 // Layouts
 import MainLayout from '../layouts/MainLayout';
 import AuthLayout from '../layouts/AuthLayout';
-import AdminLayout from '../layouts/AdminLayout'; // Layout mới cho Admin
+import AdminLayout from '../layouts/AdminLayout';
 
-// Pages - User
+// Pages - Auth
 import Login from '../pages/Auth/Login';
 import Register from '../pages/Auth/Register';
+
+// Pages - User
 import Dashboard from '../pages/Dashboard/Dashboard';
+import ExplorePage from '../pages/Explore/ExplorePage';
 import DeckList from '../pages/Deck/DeckList';
 import DeckDetail from '../pages/Deck/DeckDetail';
 import ReviewPage from '../pages/Review/ReviewPage';
 import Profile from '../pages/Profile/Profile';
 import NotFound from '../pages/NotFound';
 
-// Pages - Admin (Bạn cần tạo folder src/pages/Admin)
+// Pages - Admin
 import AdminDashboard from '../pages/Admin/Dashboard';
 import ManageUsers from '../pages/Admin/ManageUsers';
 import ManageDecks from '../pages/Admin/ManageDecks';
@@ -26,48 +29,53 @@ import PrivateRoute from './PrivateRoute';
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* ================= PUBLIC ROUTES (Không cần đăng nhập) ================= */}
+
+      {/* ================= AUTH ================= */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
 
-      {/* ================= USER & ADMIN ROUTES (Cần đăng nhập) ================= */}
-      {/* Cho phép cả 'user' và 'admin' truy cập các trang học tập thông thường */}
+      {/* ================= USER ROUTES ================= */}
       <Route element={<PrivateRoute allowRoles={['user', 'admin']} />}>
         <Route path="/" element={<MainLayout />}>
-          {/* Điều hướng mặc định "/" -> "/dashboard" */}
+
+          {/* Default */}
           <Route index element={<Navigate to="/dashboard" replace />} />
-          
+
+          {/* Core pages */}
           <Route path="dashboard" element={<Dashboard />} />
-          
-          {/* Quản lý bộ thẻ cá nhân */}
+
+          {/* Discover (Explore) */}
+          <Route path="explore" element={<ExplorePage />} />
+
+          {/* Decks */}
           <Route path="decks" element={<DeckList />} />
           <Route path="decks/:id" element={<DeckDetail />} />
 
-          {/* Ôn tập thẻ */}
+          {/* Learning */}
           <Route path="review" element={<ReviewPage />} />
-          
-          {/* Trang cá nhân */}
+
+          {/* Profile */}
           <Route path="profile" element={<Profile />} />
+
         </Route>
       </Route>
 
-      {/* ================= ADMIN ONLY ROUTES (Chỉ Admin mới vào được) ================= */}
+      {/* ================= ADMIN ROUTES ================= */}
       <Route element={<PrivateRoute allowRoles={['admin']} />}>
         <Route path="/admin" element={<AdminLayout />}>
-          {/* Trang thống kê tổng quan của Admin */}
+
           <Route index element={<AdminDashboard />} />
-          
-          {/* Quản lý người dùng hệ thống */}
+
           <Route path="users" element={<ManageUsers />} />
-          
-          {/* Kiểm duyệt tất cả bộ thẻ hệ thống */}
+
           <Route path="decks" element={<ManageDecks />} />
+
         </Route>
       </Route>
 
-      {/* ================= 404 NOT FOUND ================= */}
+      {/* ================= 404 ================= */}
       <Route path="*" element={<NotFound />} />
 
     </Routes>

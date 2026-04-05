@@ -1,36 +1,35 @@
-import { Outlet, useLocation } from "react-router-dom";
-import Sidebar from "../components/layout/Sidebar";
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
+import { Outlet, useLocation } from 'react-router-dom';
+import Sidebar from '../components/layout/Sidebar';
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
 
 const MainLayout = () => {
   const location = useLocation();
 
-  // Mapping title theo route (xịn hơn hardcode)
   const getTitle = () => {
-    if (location.pathname === "/") return "Tiến độ học tập";
-    if (location.pathname.startsWith("/decks")) return "Bộ thẻ";
-    if (location.pathname.startsWith("/review")) return "Ôn tập";
-    if (location.pathname.startsWith("/profile")) return "Trang cá nhân";
-    return "Dashboard";
+    if (location.pathname === '/') return 'Tiến độ học tập';
+    if (location.pathname.startsWith('/decks')) return 'Bộ thẻ';
+    if (location.pathname.startsWith('/review')) return 'Ôn tập';
+    if (location.pathname.startsWith('/profile')) return 'Trang cá nhân';
+    if (location.pathname.startsWith('/explore')) return 'Khám phá';
+    return 'Dashboard';
   };
 
   return (
-    <div className="flex min-h-screen bg-surface">
-      {/* Sidebar */}
+    <div className="bg-slate-50 min-h-screen flex">
       <Sidebar />
 
-      {/* Main content */}
-      <div className="flex flex-col flex-1 md:ml-64">
-        {/* Header */}
+      {/* Main wrapper: Đảm bảo lùi lề trái md:ml-64 đồng nhất */}
+      <div className="flex min-h-screen flex-1 flex-col md:ml-64 transition-all duration-300">
         <Header title={getTitle()} />
 
-        {/* Page Content */}
-        <main className="flex-1 pt-16 px-6 md:px-8">
-          <Outlet />
+        {/* Content Area: Dùng p-8 để giống hệt Admin Layout */}
+        <main className="flex-1 p-8 mt-20"> {/* mt-20 để bù cho h-20 của fixed header */}
+          <div className="mx-auto w-full max-w-7xl">
+            <Outlet />
+          </div>
         </main>
 
-        {/* Footer */}
         <Footer />
       </div>
     </div>

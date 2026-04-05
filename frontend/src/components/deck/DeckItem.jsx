@@ -1,8 +1,33 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+// import deckApi from '../../api/deck.api'; // Hãy đảm bảo bạn đã import deckApi
 
 const DeckItem = ({ deck, onDelete }) => {
+  // Giả sử deck.is_public là dữ liệu từ Backend (1: công khai, 0: riêng tư)
+  const [isPublic, setIsPublic] = useState(deck.is_public === 1);
+  const [isChanging, setIsChanging] = useState(false);
+
+  const handleTogglePublic = async (e) => {
+    e.preventDefault(); // Ngăn chặn sự kiện click lan ra Link
+    setIsChanging(true);
+    
+    try {
+      const newStatus = !isPublic;
+      // Gọi API thật của bạn ở đây:
+      // await deckApi.update(deck.id, { is_public: newStatus ? 1 : 0 });
+      
+      setIsPublic(newStatus);
+      toast.success(newStatus ? "Đã công khai bộ thẻ" : "Đã chuyển về riêng tư");
+    } catch {
+      toast.error("Không thể thay đổi trạng thái chia sẻ");
+    } finally {
+      setIsChanging(false);
+    }
+  };
+
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition-all group">
+    <div className="bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition-all group relative">
       <div className="flex justify-between items-start mb-4">
         <div 
           className="w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-inner"
@@ -10,12 +35,27 @@ const DeckItem = ({ deck, onDelete }) => {
         >
           📁
         </div>
-        <button 
-          onClick={() => onDelete(deck.id)}
-          className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-        >
-          🗑️
-        </button>
+        
+        <div className="flex gap-2">
+          {/* NÚT CÔNG KHAI / RIÊNG TƯ MỚI */}
+          <button
+            onClick={handleTogglePublic}
+            disabled={isChanging}
+            title={isPublic ? "Đang công khai" : "Đang riêng tư"}
+            className={`text-lg p-1 rounded-lg transition-all transform hover:scale-110 ${
+              isChanging ? 'opacity-50' : 'opacity-100'
+            }`}
+          >
+            {isPublic ? '🌎' : '🔒'}
+          </button>
+
+          <button 
+            onClick={() => onDelete(deck.id)}
+            className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1"
+          >
+            🗑️
+          </button>
+        </div>
       </div>
       
       <Link to={`/decks/${deck.id}`}>
@@ -26,9 +66,18 @@ const DeckItem = ({ deck, onDelete }) => {
       <p className="text-slate-500 text-sm mb-4 line-clamp-2">{deck.description}</p>
       
       <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-        <span className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-600 rounded-lg">
-          {deck.cards_count} thẻ
-        </span>
+        <div className="flex gap-2 items-center">
+          <span className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-600 rounded-lg">
+            {deck.cards_count} thẻ
+          </span>
+          {/* Badge nhỏ hiển thị trạng thái bằng chữ nếu bạn muốn rõ ràng hơn */}
+          {isPublic && (
+            <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-1.5 py-0.5 rounded">
+              PUBLIC
+            </span>
+          )}
+        </div>
+
         <Link 
           to={`/review/${deck.id}`} 
           className="text-primary text-sm font-bold hover:underline"
