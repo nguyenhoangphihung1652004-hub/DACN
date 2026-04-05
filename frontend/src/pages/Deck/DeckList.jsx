@@ -71,7 +71,7 @@ const DeckList = () => {
                 {deck.card_count || 0} thẻ
               </span>
               <Link 
-                to={`/decks/${deck.deck_id}/cards`}
+                to={`/decks/${deck.deck_id}`}
                 className="text-slate-600 font-medium text-sm hover:text-primary transition"
               >
                 Quản lý thẻ →

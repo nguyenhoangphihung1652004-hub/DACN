@@ -1,10 +1,9 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth'; // Sử dụng Hook đã tạo
+import { useAuth } from '../hooks/useAuth';
 
-const PrivateRoute = () => {
+const PrivateRoute = ({ allowRoles }) => {
   const { user, loading } = useAuth();
 
-  // Hiển thị trạng thái chờ trong khi kiểm tra Token (ngăn chặn việc bị đá văng ra Login khi F5 trang)
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -13,8 +12,15 @@ const PrivateRoute = () => {
     );
   }
 
-  // Nếu có user thì cho vào (Outlet), không thì về trang Login
-  return user ? <Outlet /> : <Navigate to="/login" replace />;
+  // Nếu không có user -> về Login
+  if (!user) return <Navigate to="/login" replace />;
+
+  // Nếu có yêu cầu Role mà user không khớp -> về Dashboard người dùng
+  if (allowRoles && !allowRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;
