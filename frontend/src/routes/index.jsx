@@ -12,6 +12,9 @@ import DeckList from '../pages/Deck/DeckList';
 import DeckDetail from '../pages/Deck/DeckDetail';
 import ReviewPage from '../pages/Review/ReviewPage';
 import NotFound from '../pages/NotFound';
+import Profile from '../pages/Profile/Profile';
+import CardList from '../pages/Card/CardList';
+import AddCard from '../pages/Card/AddCard';
 
 // Bảo mật
 import PrivateRoute from './PrivateRoute';
@@ -39,9 +42,14 @@ const AppRoutes = () => {
           {/* ================= DECK ================= */}
           <Route path="decks" element={<DeckList />} />
           <Route path="decks/:id" element={<DeckDetail />} />
+          <Route path="decks/:id/cards" element={<CardList />} />
 
           {/* ================= REVIEW ================= */}
-          <Route path="review/:id" element={<ReviewPage />} />
+          <Route path="review" element={<ReviewPage />} />
+          
+          <Route path="profile" element={<Profile />} />
+
+          <Route path="decks/:id/add-card" element={<AddCard />} />
 
         </Route>
       </Route>

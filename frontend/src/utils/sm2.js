@@ -5,12 +5,17 @@
  * @param {number} previousInterval: Khoảng cách ngày ôn tập trước đó
  * @param {number} previousEaseFactor: Hệ số dễ (mặc định 2.5)
  */
-export const calculateSM2 = (quality, repetitions, previousInterval, previousEaseFactor) => {
+export const calculateSM2 = (
+  quality,
+  repetitions,
+  previousInterval,
+  previousEaseFactor
+) => {
   let nextInterval;
   let nextEaseFactor;
   let nextRepetitions;
 
-  if (quality >= 3) { // Người dùng nhớ thẻ
+  if (quality >= 3) {
     if (repetitions === 0) {
       nextInterval = 1;
     } else if (repetitions === 1) {
@@ -18,9 +23,13 @@ export const calculateSM2 = (quality, repetitions, previousInterval, previousEas
     } else {
       nextInterval = Math.round(previousInterval * previousEaseFactor);
     }
+
     nextRepetitions = repetitions + 1;
-    nextEaseFactor = previousEaseFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-  } else { // Người dùng quên thẻ
+
+    nextEaseFactor =
+      previousEaseFactor +
+      (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+  } else {
     nextRepetitions = 0;
     nextInterval = 1;
     nextEaseFactor = previousEaseFactor;
@@ -28,9 +37,14 @@ export const calculateSM2 = (quality, repetitions, previousInterval, previousEas
 
   if (nextEaseFactor < 1.3) nextEaseFactor = 1.3;
 
+  // ✅ Tính ngày ôn tiếp theo
+  const nextReviewDate = new Date();
+  nextReviewDate.setDate(nextReviewDate.getDate() + nextInterval);
+
   return {
     repetitions: nextRepetitions,
     interval_days: nextInterval,
     ease_factor: nextEaseFactor,
+    next_review_date: nextReviewDate.toISOString().split('T')[0], // YYYY-MM-DD
   };
 };
