@@ -14,15 +14,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const res = await authApi.getProfile();
-          setUser(res.user);
-        } catch {
-          // 2. Sửa lỗi unused: Bỏ biến 'error' nếu không dùng đến
-          localStorage.removeItem('token');
-        }
+      const token = localStorage.getItem('sr_token');
+      const savedUser = localStorage.getItem('sr_user');
+      if (token && savedUser) {
+        // Tạm thời lấy User trực tiếp từ LocalStorage do Backend PHP chưa có hàm getProfile()
+        setUser(JSON.parse(savedUser));
+      } else {
+        localStorage.removeItem('sr_token');
+        localStorage.removeItem('sr_user');
       }
       setLoading(false);
     };
