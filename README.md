@@ -2,6 +2,14 @@
 ```
 DACN
 ├─ backend
+│  ├─ api
+│  │  └─ auth
+│  │     ├─ login.php
+│  │     └─ register.php
+│  ├─ config
+│  │  └─ test.php
+│  └─ models
+│     └─ User.php
 ├─ frontend
 │  ├─ .prettierrc
 │  ├─ eslint.config.js

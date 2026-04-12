@@ -28,10 +28,11 @@ const Register = () => {
     }
   };
 
+  // Tối ưu hóa các class với biến canonical
   const inputClass =
-    'w-full px-4 py-3 bg-[#f3f4f5] border-none rounded-lg focus:ring-2 focus:ring-[#0058be]/20 text-[#191c1d] placeholder:text-[#c2c6d6] transition-all';
+    'w-full px-4 py-3 bg-[#f3f4f5] border-none rounded-lg focus:ring-2 focus:ring-[#0058be]/20 text-on-surface placeholder:text-outline-variant transition-all';
   const labelClass =
-    'block text-[10px] font-bold uppercase tracking-wider text-[#424754] ml-1';
+    'block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant ml-1';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -79,21 +80,21 @@ const Register = () => {
             className="absolute top-1/2 right-3 -translate-y-1/2"
           >
             {showPassword ? (
-              <MdVisibilityOff className="text-xl text-[#c2c6d6] hover:text-[#191c1d]" />
+              <MdVisibilityOff className="text-xl text-outline-variant hover:text-on-surface" />
             ) : (
-              <MdVisibility className="text-xl text-[#c2c6d6] hover:text-[#191c1d]" />
+              <MdVisibility className="text-xl text-outline-variant hover:text-on-surface" />
             )}
           </button>
         </div>
       </div>
 
-      {/* Terms Agreement (Optional but looks professional) */}
-      <p className="px-1 text-[11px] text-[#424754] italic">
+      {/* Terms Agreement */}
+      <p className="px-1 text-[11px] text-on-surface-variant italic">
         Bằng cách đăng ký, bạn đồng ý với các điều khoản dịch vụ của chúng tôi.
       </p>
 
       {/* Action Button */}
-      <button className="w-full rounded-lg bg-linear-to-r from-[#006c49] to-[#4edea3] py-4 font-bold text-white shadow-[0_8px_16px_-4px_rgba(0,108,73,0.3)] transition-all hover:opacity-90 active:scale-[0.98]">
+      <button className="w-full rounded-lg bg-linear-to-r from-secondary to-[#4edea3] py-4 font-bold text-white shadow-[0_8px_16px_-4px_rgba(0,108,73,0.3)] transition-all hover:opacity-90 active:scale-[0.98]">
         Tạo tài khoản ngay
       </button>
     </form>
