@@ -3,36 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import reviewApi from '../../api/review.api';
-import { calculateSM2 } from '../../utils/sm2';
 import Loading from '../../components/common/Loading';
 
-// ================= MOCK DATA =================
-const MOCK_CARDS = [
-  {
-    card_id: 1,
-    front_text: "React Hook là gì?",
-    back_text: "Là những hàm cho phép bạn 'móc' vào các tính năng của React như state và lifecycle từ các function components.",
-    repetitions: 0,
-    interval_days: 0,
-    ease_factor: 2.5
-  },
-  {
-    card_id: 2,
-    front_text: "JSX là gì?",
-    back_text: "Viết tắt của JavaScript XML. Nó cho phép chúng ta viết HTML trong React một cách dễ dàng hơn.",
-    repetitions: 1,
-    interval_days: 1,
-    ease_factor: 2.5
-  },
-  {
-    card_id: 3,
-    front_text: "Công dụng của useEffect?",
-    back_text: "Dùng để quản lý các side effects như call API, subscription hoặc thay đổi DOM thủ công.",
-    repetitions: 2,
-    interval_days: 4,
-    ease_factor: 2.6
-  }
-];
+
 
 const QUALITY = {
   AGAIN: 0,
@@ -60,16 +33,11 @@ const ReviewPage = () => {
         // Gọi API thật
         const data = await reviewApi.getDueCards(id);
         if (mounted) {
-          // Nếu backend trả về mảng rỗng hoặc lỗi, ta dùng Mock Data để test
-          if (!data || data.length === 0) {
-            setCards(MOCK_CARDS);
-          } else {
-            setCards(data);
-          }
+          setCards(data || []);
         }
       } catch {
-        console.warn("Backend chưa sẵn sàng, đang sử dụng dữ liệu mẫu.");
-        if (mounted) setCards(MOCK_CARDS); // Dùng data mẫu khi lỗi kết nối
+        toast.error("Lỗi lấy dữ liệu từ Backend.");
+        if (mounted) setCards([]);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -84,16 +52,9 @@ const ReviewPage = () => {
     const currentCard = cards[currentIndex];
     if (!currentCard) return;
 
-    const result = calculateSM2(
-      quality,
-      currentCard.repetitions || 0,
-      currentCard.interval_days || 0,
-      currentCard.ease_factor || 2.5
-    );
-
     try {
-      // Giả lập gọi API thành công để không bị đứng ở môi trường dev
-      await reviewApi.updateCardProgress(currentCard.card_id, result)
+      // Giao toàn bộ việc tính toán não bộ cho PHP Backend (API truyền mỗi quality)
+      await reviewApi.updateCardProgress(currentCard.id, { quality })
         .catch(() => console.log("Mock: Cập nhật tiến độ thành công (Local)"));
 
       setIsFlipped(false);
@@ -173,7 +134,7 @@ const ReviewPage = () => {
               CÂU HỎI
             </span>
             <h2 className="text-2xl md:text-3xl font-black text-slate-800 leading-tight">
-              {currentCard.front_text}
+              {currentCard.front_content}
             </h2>
             <p className="absolute bottom-10 animate-bounce text-slate-400 text-xs font-medium">
               Chạm để lật thẻ 👆
@@ -192,7 +153,7 @@ const ReviewPage = () => {
 
             <div className="flex-1 flex items-center justify-center">
               <p className="text-lg md:text-xl leading-relaxed font-medium">
-                {currentCard.back_text}
+                {currentCard.back_content}
               </p>
             </div>
           </div>
