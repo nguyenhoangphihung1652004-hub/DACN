@@ -37,7 +37,7 @@ const AppRoutes = () => {
       </Route>
 
       {/* ================= USER ROUTES ================= */}
-      <Route element={<PrivateRoute allowRoles={['user', 'admin']} />}>
+      <Route element={<PrivateRoute allowRoles={['learner', 'admin']} />}>
         <Route path="/" element={<MainLayout />}>
 
           {/* Default */}
@@ -54,7 +54,7 @@ const AppRoutes = () => {
           <Route path="decks/:id" element={<DeckDetail />} />
 
           {/* Learning */}
-          <Route path="review" element={<ReviewPage />} />
+          <Route path="review/:id" element={<ReviewPage />} />
 
           {/* Profile */}
           <Route path="profile" element={<Profile />} />
