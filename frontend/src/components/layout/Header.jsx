@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { toast } from 'react-hot-toast';
 
 const Header = ({ title = "Bảng điều khiển" }) => {
   const { user, logout } = useAuth();
@@ -23,25 +24,28 @@ const Header = ({ title = "Bảng điều khiển" }) => {
   }, []);
 
   const handleLogout = () => {
+    // Lấy tên đầy đủ của người dùng
+    const fullName = user?.name || 'Học viên';
+    
     logout();
     setOpen(false);
+    
+    // Khung trắng mặc định của react-hot-toast
+    toast.success(`Hẹn gặp lại, ${fullName}! 👋`);
+
     navigate('/login');
   };
 
   return (
     <header className="fixed top-0 left-0 md:left-64 right-0 z-40 h-20 bg-white/80 backdrop-blur-xl flex justify-between items-center px-8 border-b border-slate-100 transition-all duration-300">
 
-      {/* LEFT: Page Title - Căn lề 8 đồng nhất với content */}
       <div className="flex items-center gap-4">
         <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
           {title}
         </h2>
       </div>
 
-      {/* RIGHT: Actions */}
       <div className="flex items-center gap-6">
-
-        {/* 🔔 Notification Button */}
         <button className="relative p-2.5 rounded-2xl bg-slate-50 text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group active:scale-95">
           <span className="material-symbols-outlined text-[24px] leading-none">
             notifications
@@ -49,7 +53,6 @@ const Header = ({ title = "Bảng điều khiển" }) => {
           <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-orange-500 border-2 border-white rounded-full group-hover:animate-ping"></span>
         </button>
 
-        {/* 👤 User Profile & Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setOpen(!open)}
@@ -59,7 +62,9 @@ const Header = ({ title = "Bảng điều khiển" }) => {
               {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
             <div className="hidden md:block text-left">
-              <p className="text-xs font-black text-slate-900 leading-none">{user?.name?.split(' ').pop()}</p>
+              <p className="text-xs font-black text-slate-900 leading-none">
+                {user?.name?.split(' ').pop()}
+              </p>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Học viên</p>
             </div>
             <span className={`material-symbols-outlined text-slate-400 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}>
@@ -67,7 +72,6 @@ const Header = ({ title = "Bảng điều khiển" }) => {
             </span>
           </button>
 
-          {/* DROPDOWN MENU */}
           {open && (
             <div className="absolute right-0 mt-4 w-64 bg-white border border-slate-100 rounded-4xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-50 py-3 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200">
               <div className="px-6 py-4 border-b border-slate-50 mb-2">

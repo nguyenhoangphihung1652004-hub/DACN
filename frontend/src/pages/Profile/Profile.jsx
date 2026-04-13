@@ -1,13 +1,55 @@
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth(); // Giả sử useAuth cung cấp setUser để cập nhật local state
+  const [loading, setLoading] = useState(false);
+  const [fullName, setFullName] = useState('');
 
-  const handleUpdate = (e) => {
+  // Đồng bộ tên từ user context vào state khi component mount hoặc user thay đổi
+  useEffect(() => {
+    if (user?.name) {
+      setFullName(user.name);
+    }
+  }, [user]);
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    toast.success('Cập nhật thông tin thành công!', { id: 'update-profile' });
+    
+    if (!fullName.trim()) {
+      return toast.error("Họ và tên không được để trống!");
+    }
+
+    setLoading(true);
+    try {
+      // Gọi API cập nhật thông tin (Thay URL bằng endpoint thật của bạn)
+      const res = await fetch("http://localhost:8000/api/auth/update_profile.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          fullname: fullName
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success('Cập nhật thông tin thành công!');
+        // Cập nhật lại context để các component khác (như Navbar) nhận tên mới
+        if (setUser) {
+          setUser({ ...user, name: fullName });
+        }
+      } else {
+        toast.error(data.message || 'Có lỗi xảy ra khi cập nhật');
+      }
+    } catch {
+      toast.error('Lỗi kết nối server!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,7 +74,7 @@ const Profile = () => {
             <div className="flex flex-col gap-6 border-b border-slate-50 pb-8 md:flex-row md:items-center">
               <div className="group relative">
                 <div className="bg-primary/10 text-primary border-primary/20 flex h-24 w-24 items-center justify-center rounded-full border-2 text-4xl font-bold shadow-inner">
-                  {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                  {fullName?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <button className="hover:text-primary absolute -right-1 -bottom-1 rounded-full border border-slate-100 bg-white p-2 shadow-md transition-colors">
                   📷
@@ -41,7 +83,7 @@ const Profile = () => {
 
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-slate-800">
-                  {user?.name || 'Người dùng'}
+                  {fullName || 'Người dùng'}
                 </h2>
                 <p className="font-medium text-slate-500">{user?.email}</p>
                 <div className="mt-2 inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
@@ -64,7 +106,8 @@ const Profile = () => {
                   Họ và tên
                 </label>
                 <input
-                  defaultValue={user?.name}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   placeholder="Nhập họ tên của bạn"
                   className="focus:ring-primary/20 focus:border-primary w-full rounded-xl border border-slate-200 bg-slate-50 p-3.5 transition-all outline-none focus:ring-2"
                 />
@@ -91,9 +134,10 @@ const Profile = () => {
 
                 <button
                   type="submit"
-                  className="bg-primary shadow-primary/20 hover:bg-primary/90 rounded-xl px-8 py-3 text-sm font-bold text-white shadow-lg transition-all active:scale-95"
+                  disabled={loading}
+                  className="bg-primary shadow-primary/20 hover:bg-primary/90 rounded-xl px-8 py-3 text-sm font-bold text-white shadow-lg transition-all active:scale-95 disabled:opacity-50"
                 >
-                  Lưu thay đổi
+                  {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
                 </button>
               </div>
             </form>

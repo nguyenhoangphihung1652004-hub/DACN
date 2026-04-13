@@ -3,57 +3,55 @@ import axiosClient from './axiosClient';
 const authApi = {
   // ================= LOGIN =================
   login: async (data) => {
-    // -------- BACKDOOR LOGIN --------
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
+    // -------- BACKDOOR LOGIN (Dùng cho môi trường dev) --------
     const ADMIN_EMAIL = "test@gmail.com";
     const ADMIN_PASS = "123456";
 
     if (data.email === ADMIN_EMAIL && data.password === ADMIN_PASS) {
-      console.log("🔥 Login backdoor thành công");
-
       const fakeResponse = {
         user: {
           id: 99,
-          name: "Nguyễn Hoàng Phi Hùng",
+          fullname: "Nguyễn Hoàng Phi Hùng",
           email: ADMIN_EMAIL,
-          role: "admin", // ✅ thêm role admin
+          role: "admin",
         },
         token: "fake-jwt-token-2026-backdoor",
       };
-
-      // Lưu localStorage
-      localStorage.setItem('token', fakeResponse.token);
-      localStorage.setItem('user', JSON.stringify(fakeResponse.user));
-
+      localStorage.setItem('sr_token', fakeResponse.token);
+      localStorage.setItem('sr_user', JSON.stringify(fakeResponse.user));
       return fakeResponse;
     }
 
-    // -------- LOGIN THẬT (backend) --------
+    // -------- LOGIN THẬT --------
     const res = await axiosClient.post('/auth/login.php', data);
-
     if (res?.token) {
       localStorage.setItem('sr_token', res.token);
-      localStorage.setItem('sr_user', JSON.stringify({ role: res.role, fullname: res.fullname }));
+      localStorage.setItem('sr_user', JSON.stringify({ 
+        role: res.role, 
+        fullname: res.fullname,
+        email: data.email // Lưu email để dùng cho profile
+      }));
     }
-
     return res;
   },
 
   // ================= REGISTER =================
   register: (data) => {
-    return axiosClient.post('/auth/register', data);
+    // data: { fullname, email, password }
+    return axiosClient.post('/auth/register.php', data);
   },
 
-  // ================= PROFILE =================
-  getProfile: () => {
-    return axiosClient.get('/auth/profile');
+  // ================= UPDATE PROFILE =================
+  updateProfile: (data) => {
+    // data: { email, fullname }
+    return axiosClient.post('/auth/update_profile.php', data);
   },
 
   // ================= LOGOUT =================
   logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('sr_token');
+    localStorage.removeItem('sr_user');
+    window.location.href = '/'; // Điều hướng về landing page
   },
 };
 

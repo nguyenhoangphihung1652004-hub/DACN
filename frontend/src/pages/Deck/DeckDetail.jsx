@@ -22,29 +22,63 @@ const DeckDetail = () => {
   });
 
   const hasFetched = useRef({});
+  const isComponentMounted = useRef(true); // Dùng ref để theo dõi trạng thái mount xuyên suốt
 
-  // ================= FETCH DATA =================
+  // ================= FETCH DATA (Dùng để refresh danh sách) =================
   const fetchData = useCallback(async () => {
     try {
       const [deckRes, cardsRes] = await Promise.all([
         deckApi.getById(id),
         cardApi.getByDeckId(id),
       ]);
-      setDeck(deckRes);
-      setCards(cardsRes);
-    } catch (error) {
-      console.error(error);
-      toast.error('Không thể tải dữ liệu bộ thẻ');
-    } finally {
-      setLoading(false);
+      if (isComponentMounted.current) {
+        setDeck(deckRes);
+        setCards(cardsRes);
+      }
+    } catch {
+      if (isComponentMounted.current) {
+        // Thêm ID để tránh lặp thông báo khi refresh
+        toast.error('Không thể tải lại dữ liệu', { id: 'fetch-detail-error' });
+      }
     }
   }, [id]);
 
+  // ================= INITIAL LOAD (Xử lý Strict Mode & Mount/Unmount) =================
   useEffect(() => {
-    if (hasFetched.current[id]) return;
-    hasFetched.current[id] = true;
-    fetchData();
-  }, [id, fetchData]);
+    isComponentMounted.current = true;
+    
+    const loadData = async () => {
+      // Chống lặp do Strict Mode bằng ref
+      if (hasFetched.current[id]) return;
+      hasFetched.current[id] = true;
+
+      try {
+        setLoading(true);
+        const [deckRes, cardsRes] = await Promise.all([
+          deckApi.getById(id),
+          cardApi.getByDeckId(id),
+        ]);
+        
+        if (isComponentMounted.current) {
+          setDeck(deckRes);
+          setCards(cardsRes);
+        }
+      } catch {
+        if (isComponentMounted.current) {
+          toast.error('Không thể tải dữ liệu bộ thẻ', { id: 'fetch-detail-error' });
+        }
+        hasFetched.current[id] = false; // Cho phép thử lại nếu lỗi
+      } finally {
+        if (isComponentMounted.current) setLoading(false);
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isComponentMounted.current = false;
+    };
+  }, [id]);
 
   // ================= ACTIONS =================
   const handleAddCard = async (e) => {
@@ -56,7 +90,10 @@ const DeckDetail = () => {
     setSubmitting(true);
     try {
       if (editingId) {
-         await cardApi.update(editingId, { front_content: newCard.front_content, back_content: newCard.back_content });
+         await cardApi.update(editingId, { 
+           front_content: newCard.front_content, 
+           back_content: newCard.back_content 
+         });
          toast.success('Đã cập nhật thẻ!');
       } else {
          await cardApi.create({ ...newCard, deck_id: id });
@@ -64,7 +101,7 @@ const DeckDetail = () => {
       }
       setNewCard({ front_content: '', back_content: '' });
       setEditingId(null);
-      fetchData(); // Refresh danh sách
+      fetchData(); // Gọi hàm refresh đã tối ưu
     } catch {
       toast.error(editingId ? 'Lỗi khi cập nhật' : 'Lỗi khi thêm thẻ');
     } finally {
@@ -75,6 +112,7 @@ const DeckDetail = () => {
   const handleEditClick = (card) => {
     setNewCard({ front_content: card.front_content, back_content: card.back_content });
     setEditingId(card.id);
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Cuộn lên để người dùng thấy form edit
   };
 
   const handleCancelEdit = () => {
@@ -87,7 +125,7 @@ const DeckDetail = () => {
     try {
       await cardApi.delete(cardId);
       toast.success('Đã xóa thẻ');
-      setCards(cards.filter(c => c.id !== cardId));
+      setCards(prev => prev.filter(c => c.id !== cardId));
     } catch {
       toast.error('Không thể xóa thẻ');
     }

@@ -1,73 +1,92 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Loading from '../../components/common/Loading';
 import deckApi from '../../api/deck.api';
 
 const ExplorePage = () => {
-  const [publicDecks, setPublicDecks] = useState([]);
-  const navigate = useNavigate();
+  const [allDecks, setAllDecks] = useState([]); // Lưu trữ toàn bộ dữ liệu từ API
+  const [displayDecks, setDisplayDecks] = useState([]); // Dữ liệu sau khi lọc để hiển thị
   const [cloningId, setCloningId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const navigate = useNavigate();
+  const isInitialMount = useRef(true);
 
-  const fetchPublicDecks = useCallback(async () => {
+  // Hàm gọi API lấy danh sách (chỉ gọi 1 lần khi load trang)
+  const fetchPublicDecks = useCallback(async (isMounted) => {
     setLoading(true);
     try {
       const data = await deckApi.getPublic();
-
-      const filtered = data.filter(d =>
-        d.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (d.description || '').toLowerCase().includes(searchQuery.toLowerCase())
-      );
-
-      setPublicDecks(filtered);
+      if (isMounted) {
+        setAllDecks(data);
+        setDisplayDecks(data);
+      }
     } catch {
-      toast.error("Không thể tải danh sách bộ thẻ công khai");
+      if (isMounted) {
+        // Thêm ID để tránh hiện nhiều thông báo lỗi cùng lúc
+        toast.error("Không thể tải danh sách bộ thẻ công khai", { id: 'fetch-decks-error' });
+      }
     } finally {
-      setLoading(false);
+      if (isMounted) setLoading(false);
     }
-  }, [searchQuery]);
+  }, []);
 
+  // Effect khởi tạo dữ liệu
   useEffect(() => {
-    fetchPublicDecks();
+    let isMounted = true;
+    fetchPublicDecks(isMounted);
+    
+    return () => {
+      isMounted = false;
+    };
   }, [fetchPublicDecks]);
 
-  const handleDownload = async(deckId) => {
+  // Effect xử lý việc lọc dữ liệu tại Client (tối ưu hơn việc gọi API liên tục)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    const filtered = allDecks.filter(d =>
+      d.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (d.description || '').toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setDisplayDecks(filtered);
+  }, [searchQuery, allDecks]);
+
+  const handleDownload = async (deckId) => {
     if (cloningId) return;
     setCloningId(deckId);
-    
-    // Khởi tạo tiến trình copy Transaction
+
     const clonePromise = deckApi.clone(deckId);
-    
-    // Giao diện Toast Loading cực xịn chờ đợi Backend copy
+
     toast.promise(clonePromise, {
       loading: 'Đang tải bộ thẻ về kho...',
-      success: '🎉 Tải về thành công! Bạn có thể học ngay bây giờ.',
+      success: '🎉 Tải về thành công!',
       error: 'Tải bộ thẻ thất bại. Vui lòng thử lại.'
-    });
+    }, { id: 'clone-toast' }); // Dùng ID để toast không bị đè
 
     try {
       await clonePromise;
-      setTimeout(() => navigate('/decks'), 1500); // Chở về nhà kho để bóc tem học luôn
+      setTimeout(() => navigate('/decks'), 1500);
     } catch {
-      // lỗi đã có toast.promise lo
+      // Đã có toast.promise xử lý hiển thị lỗi
     } finally {
       setCloningId(null);
     }
   };
 
-  // ✅ dùng Loading component giống DeckList
-  if (loading && publicDecks.length === 0) {
+  if (loading && allDecks.length === 0) {
     return <Loading />;
   }
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
-
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden">
-
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
 
         <div className="relative z-10">
@@ -93,8 +112,7 @@ const ExplorePage = () => {
 
       {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-
-        {publicDecks.map((deck) => (
+        {displayDecks.map((deck) => (
           <div
             key={deck.id}
             className="group bg-white rounded-4xl border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 p-8 flex flex-col h-full relative overflow-hidden"
@@ -106,7 +124,6 @@ const ExplorePage = () => {
                 <span className="text-[10px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-xl border-2 bg-emerald-50 text-emerald-500 border-emerald-100">
                   Cộng Đồng
                 </span>
-
                 <span className="text-[10px] font-black text-primary bg-primary/10 px-3 py-1.5 rounded-xl uppercase tracking-widest">
                   Miễn phí
                 </span>
@@ -118,7 +135,7 @@ const ExplorePage = () => {
 
               <p className="text-sm text-slate-400 font-medium italic flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px]">👤</span>
-                {deck.author_name}
+                {deck.author_name || 'Ẩn danh'}
               </p>
             </div>
 
@@ -132,7 +149,7 @@ const ExplorePage = () => {
 
               <button
                 onClick={() => handleDownload(deck.id)}
-                disabled={cloningId === deck.id}
+                disabled={cloningId !== null}
                 className="bg-slate-900 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary transition-all shadow-xl shadow-slate-200 hover:shadow-primary/30 active:scale-95 disabled:opacity-50"
               >
                 {cloningId === deck.id ? 'Đang sao chép' : 'Tải về'}
@@ -143,7 +160,7 @@ const ExplorePage = () => {
       </div>
 
       {/* EMPTY STATE */}
-      {publicDecks.length === 0 && !loading && (
+      {displayDecks.length === 0 && !loading && (
         <div className="text-center py-24 bg-white rounded-[2.5rem] border border-dashed border-slate-200 flex flex-col items-center">
           <div className="text-6xl mb-6 opacity-20">🏜️</div>
           <p className="text-slate-400 font-black uppercase tracking-widest text-sm">

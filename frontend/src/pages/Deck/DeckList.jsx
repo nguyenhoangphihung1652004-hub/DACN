@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import deckApi from '../../api/deck.api';
@@ -16,20 +16,34 @@ const DeckList = () => {
     is_public: false,
   });
 
-  const fetchDecks = async () => {
+  // 1. Dùng useCallback để tránh hàm bị tạo lại vô ích
+  // 2. Thêm tham số isMounted để kiểm tra trạng thái component
+  const fetchDecks = useCallback(async (isMounted = true) => {
     try {
       const data = await deckApi.getAll();
-      setDecks(data);
+      if (isMounted) {
+        setDecks(data);
+      }
     } catch {
-      toast.error('Không thể tải danh sách bộ thẻ');
+      if (isMounted) {
+        // 3. Thêm id để toast không bị hiện lặp lại
+        toast.error('Không thể tải danh sách bộ thẻ', { id: 'fetch-decks-error' });
+      }
     } finally {
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchDecks();
-  }, []);
+    let isMounted = true;
+    fetchDecks(isMounted);
+
+    return () => {
+      isMounted = false; // Cleanup để tránh cập nhật state khi component đã bị gỡ
+    };
+  }, [fetchDecks]);
 
   const filteredDecks = decks.filter((deck) =>
     deck.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -46,7 +60,7 @@ const DeckList = () => {
       toast.success('Tạo bộ thẻ thành công! 🎉');
       setIsModalOpen(false);
       setNewDeck({ title: '', description: '', is_public: false });
-      fetchDecks();
+      fetchDecks(true); // Tải lại danh sách sau khi tạo
     } catch {
       toast.error('Không thể tạo bộ thẻ!');
     } finally {
@@ -61,7 +75,6 @@ const DeckList = () => {
       
       {/* HEADER SECTION */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden">
-        {/* Trang trí nhẹ ở góc */}
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
         
         <div className="relative z-10">
@@ -108,7 +121,6 @@ const DeckList = () => {
             key={deck.id}
             className="group bg-white rounded-4xl border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 p-8 flex flex-col h-full relative overflow-hidden"
           >
-            {/* Trang trí background card */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 group-hover:bg-primary/5 transition-colors duration-500"></div>
 
             <div className="flex-1 relative z-10">
@@ -142,7 +154,6 @@ const DeckList = () => {
                 Chi tiết bộ thẻ
                 <span className="text-xl leading-none group-hover:translate-x-1 transition-transform">→</span>
               </Link>
-              
               <div className="h-2 w-2 rounded-full bg-slate-200 group-hover:bg-primary transition-colors group-hover:animate-ping"></div>
             </div>
           </div>
@@ -167,7 +178,6 @@ const DeckList = () => {
           />
           
           <div className="relative bg-white w-full max-w-xl rounded-[3rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] overflow-hidden animate-in zoom-in-95 duration-300 border border-white">
-            {/* Modal Decor */}
             <div className="h-3 bg-primary w-full"></div>
             
             <div className="p-10 md:p-12">
@@ -211,13 +221,13 @@ const DeckList = () => {
                     className="group flex items-center gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer hover:bg-emerald-50 hover:border-emerald-100 transition-all"
                     onClick={() => setNewDeck({...newDeck, is_public: !newDeck.is_public})}
                 >
-                   <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${newDeck.is_public ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200'}`}>
+                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${newDeck.is_public ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200'}`}>
                         {newDeck.is_public && <span className="text-white text-xs font-bold">✓</span>}
-                   </div>
-                   <div>
+                    </div>
+                    <div>
                         <p className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 transition-colors">Công khai bộ thẻ</p>
                         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider group-hover:text-emerald-500 transition-colors">Chia sẻ kiến thức với mọi người</p>
-                   </div>
+                    </div>
                 </div>
 
                 <div className="flex gap-4 pt-6">

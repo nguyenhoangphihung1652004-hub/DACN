@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
-const Login = () => {
+const Login = ({ onSwitch }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -12,13 +12,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const validateForm = () => {
-    // 0. Bắt buộc nhập
-    if (!email) {
-      toast.error("Vui lòng nhập email");
-      return false;
-    }
-    if (!password) {
-      toast.error("Vui lòng nhập password");
+    if (!email || !password) {
+      toast.error("Vui lòng nhập đầy đủ thông tin");
       return false;
     }
 
@@ -26,36 +21,37 @@ const Login = () => {
       toast.error("Email không được chứa khoảng trắng!");
       return false;
     }
-    if (!email.endsWith("@gmail.com")) {
-      toast.error("Email đăng nhập bắt buộc phải có đuôi @gmail.com!");
-      return false;
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        toast.error("Định dạng email không hợp lệ!");
+        return false;
     }
-    const localPart = email.split('@')[0];
-    if (email.length > 254) {
-      toast.error("Độ dài toàn bộ email không được vượt quá 254 ký tự!");
+
+    if (!email.endsWith("@gmail.com")) {
+      toast.error("Hệ thống chỉ hỗ trợ @gmail.com!");
       return false;
     }
 
     if (/\s/.test(password)) {
-      toast.error("Mật khẩu tuyệt đối không được chứa khoảng trắng!");
+      toast.error("Mật khẩu không được chứa khoảng trắng!");
       return false;
     }
-    // Ghi chú: Xóa validation Regex chữ hoa, thường ở Login để cứu tài khoản Admin CŨ.
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
     toast.promise(
       login({ email, password }),
       {
         loading: 'Đang xác thực...',
         success: 'Đăng nhập thành công!',
-        error: (err) => `Lỗi: ${err.response?.data?.message || 'Thông tin không chính xác'}`,
+        error: (err) => `${err.response?.data?.message || 'Thông tin không chính xác'}`,
       }
     ).then((res) => {
-      // Phân luồng giao diện tùy theo Role trả về từ thẻ Căn Cước
       if (res && res.role === 'admin') {
         navigate('/admin');
       } else {
@@ -65,70 +61,77 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* EMAIL */}
       <div className="space-y-1.5">
-        <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant ml-1">
-          Email
+        <label className="ml-1 block text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
+          Email học viên
         </label>
         <input 
           type="email" 
-          required
-          placeholder="name@example.com"
-          className="w-full px-4 py-3 bg-surface-container-low rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition"
+          value={email}
+          placeholder="name@gmail.com"
+          className="w-full rounded-xl bg-slate-50 px-4 py-3.5 text-sm outline-none ring-primary/10 transition-all focus:bg-white focus:ring-4 border border-slate-100"
           onChange={(e) => setEmail(e.target.value)} 
         />
       </div>
 
       {/* PASSWORD */}
       <div className="space-y-1.5">
-        <div className="flex justify-between items-center px-1">
-          <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-            Mật khẩu
-          </label>
-          <a className="text-[11px] font-semibold text-primary hover:underline" href="#">
-            Quên mật khẩu?
-          </a>
-        </div>
-
+        <label className="ml-1 block text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
+          Mật khẩu
+        </label>
         <div className="relative">
           <input 
             type={showPassword ? "text" : "password"}
-            required
+            value={password}
             placeholder="••••••••"
-            className="w-full px-4 py-3 bg-surface-container-low rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition"
+            className="w-full rounded-xl bg-slate-50 px-4 py-3.5 text-sm outline-none ring-primary/10 transition-all focus:bg-white focus:ring-4 border border-slate-100"
             onChange={(e) => setPassword(e.target.value)} 
           />
 
-          {/* ICON BUTTON */}
           <button 
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
           >
             {showPassword ? (
-              <MdVisibilityOff className="text-xl text-outline-variant hover:text-on-surface transition" />
+              <MdVisibilityOff size={20} />
             ) : (
-              <MdVisibility className="text-xl text-outline-variant hover:text-on-surface transition" />
+              <MdVisibility size={20} />
             )}
           </button>
         </div>
       </div>
 
-      {/* REMEMBER */}
-      <div className="flex items-center gap-2 px-1">
-        <input type="checkbox" id="remember" className="w-4 h-4 accent-primary" />
-        <label htmlFor="remember" className="text-sm text-on-surface-variant font-medium">
-          Ghi nhớ đăng nhập
-        </label>
+      {/* REMEMBER & SWITCH */}
+      <div className="pt-2 space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <label className="flex cursor-pointer items-center gap-2">
+            <input type="checkbox" id="remember" className="h-4 w-4 rounded border-slate-300 accent-slate-900" />
+            <span className="text-xs font-bold text-slate-500">Ghi nhớ tôi</span>
+          </label>
+          
+          <p className="text-xs font-bold text-slate-500">
+            Chưa có tài khoản?{' '}
+            <button 
+              type="button"
+              onClick={onSwitch}
+              className="text-primary hover:underline transition-all"
+            >
+              Đăng ký
+            </button>
+          </p>
+        </div>
+
+        {/* SUBMIT */}
+        <button 
+          type="submit"
+          className="w-full rounded-xl bg-slate-900 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-slate-200 transition-all hover:bg-slate-800 active:scale-[0.98]"
+        >
+          Xác nhận đăng nhập
+        </button>
       </div>
-
-      {/* SUBMIT */}
-      <button className="w-full py-4 bg-linear-to-r from-primary to-primary-container text-white font-bold rounded-lg hover:opacity-90 active:scale-[0.98] transition">
-        Đăng nhập
-      </button>
-
     </form>
   );
 };
