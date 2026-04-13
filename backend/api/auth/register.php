@@ -24,7 +24,42 @@ $user = new User($db);
 $data = json_decode(file_get_contents("php://input"));
 
 if (!empty($data->fullname) && !empty($data->email) && !empty($data->password)) {
-    $user->email = $data->email;
+    $fullname = trim($data->fullname);
+    $email = $data->email;
+    $password = $data->password;
+
+    // Validate Fullname (mb_strlen hỡ trợ tiếng việt UTF-8)
+    if (mb_strlen($fullname, 'UTF-8') < 10 || mb_strlen($fullname, 'UTF-8') > 255) {
+        http_response_code(400); echo json_encode(["message" => "Họ và tên phải từ 10 đến 255 ký tự."]); exit();
+    }
+
+    // Validate Email
+    if (preg_match('/\s/', $email)) {
+        http_response_code(400); echo json_encode(["message" => "Email không được chứa khoảng trắng."]); exit();
+    }
+    if (!str_ends_with($email, "@gmail.com")) {
+        http_response_code(400); echo json_encode(["message" => "Email đăng ký bắt buộc phải là @gmail.com."]); exit();
+    }
+    $localPart = explode('@', $email)[0];
+    if (strlen($localPart) < 5 || strlen($localPart) > 10 || strlen($email) > 254) {
+        http_response_code(400); echo json_encode(["message" => "Độ dài tài khoản Email trước @ phải từ 5 đến 10 ký tự."]); exit();
+    }
+
+    // Validate Password
+    if (preg_match('/\s/', $password)) {
+        http_response_code(400); echo json_encode(["message" => "Mật khẩu tuyệt đối không được có khoảng trắng."]); exit();
+    }
+    if (strlen($password) < 10 || strlen($password) > 12) {
+        http_response_code(400); echo json_encode(["message" => "Mật khẩu quy định ngặt nghèo là từ 10 đến 12 ký tự."]); exit();
+    }
+    // Check độ phức tạp mật khẩu: Hoa, thường, số, ký tự đặc biệt (\W_ check non-alphanumeric)
+    if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/\d/', $password) || !preg_match('/[\W_]/', $password)) {
+        http_response_code(400); echo json_encode(["message" => "Mật khẩu phải chứa đủ 1 chữ Hoa, thường, số, ký tự đặc biệt."]); exit();
+    }
+
+    // Lọt qua cửa Ải -> nạp vào Model
+    $user->email = $email;
+    $data->fullname = $fullname;
 
     // Xem Email đã đụng hàng chưa
     if ($user->emailExists()) {
