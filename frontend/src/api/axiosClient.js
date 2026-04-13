@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost/api', // URL backend PHP của bạn
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,7 +10,7 @@ const axiosClient = axios.create({
 // Can thiệp vào request trước khi gửi đi
 axiosClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('sr_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -25,8 +25,8 @@ axiosClient.interceptors.response.use(
   (error) => {
     // Xử lý lỗi tập trung (ví dụ: token hết hạn)
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('sr_token');
+      localStorage.removeItem('sr_user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
