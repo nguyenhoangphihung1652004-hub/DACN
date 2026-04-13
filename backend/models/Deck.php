@@ -1,0 +1,73 @@
+<?php
+class Deck {
+    private $conn;
+    private $table_name = "decks";
+
+    // Các cột trong DB
+    public $id;
+    public $user_id;
+
+    public $title;
+    public $description;
+    public $is_public;
+    public $created_at;
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    // Đọc danh sách Bộ thẻ CÁ NHÂN của một user
+    public function readByUser() {
+        // Query nối bảng Category lấy Tên thư mục, đếm số Card nằm trong bộ thẻ đó
+        // Bỏ truy cập cấu trúc category, chỉ còn User
+        $query = "SELECT d.id, d.title, d.description, d.is_public, d.created_at,
+                   (SELECT COUNT(*) FROM cards WHERE deck_id = d.id) as cards_count
+                  FROM " . $this->table_name . " d
+                  WHERE d.user_id = :user_id
+                  ORDER BY d.created_at DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->execute();
+        
+        return $stmt;
+    }
+
+    // Đọc danh sách Bộ thẻ CÔNG KHAI trên mục Khám Phá
+    public function readPublic() {
+        $query = "SELECT d.id, d.title, d.description, u.fullname as author_name,
+                   (SELECT COUNT(*) FROM cards WHERE deck_id = d.id) as cards_count
+                  FROM " . $this->table_name . " d
+                  LEFT JOIN users u ON d.user_id = u.id
+                  WHERE d.is_public = 1
+                  ORDER BY d.created_at DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        
+        return $stmt;
+    }
+
+    // Tạo Bộ thẻ mới
+    public function create() {
+        $query = "INSERT INTO " . $this->table_name . "
+                  SET user_id=:user_id, title=:title, description=:description, is_public=:is_public";
+        
+        $stmt = $this->conn->prepare($query);
+
+        $this->title = htmlspecialchars(strip_tags($this->title));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+
+        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->bindParam(":title", $this->title);
+        $stmt->bindParam(":description", $this->description);
+        $stmt->bindParam(":is_public", $this->is_public);
+
+        if($stmt->execute()) {
+            $this->id = $this->conn->lastInsertId();
+            return true;
+        }
+        return false;
+    }
+}
+?>
