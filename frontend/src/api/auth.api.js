@@ -30,15 +30,14 @@ const authApi = {
     }
 
     // -------- LOGIN THẬT (backend) --------
-    const res = await axiosClient.post('/auth/login', data);
+    const res = await axiosClient.post('/auth/login.php', data);
 
-    // nếu backend trả về đúng format
-    if (res.data?.token) {
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+    if (res?.token) {
+      localStorage.setItem('sr_token', res.token);
+      localStorage.setItem('sr_user', JSON.stringify({ role: res.role, fullname: res.fullname }));
     }
 
-    return res.data;
+    return res;
   },
 
   // ================= REGISTER =================
