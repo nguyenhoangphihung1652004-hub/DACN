@@ -35,7 +35,7 @@ class Deck {
 
     // Đọc danh sách Bộ thẻ CÔNG KHAI trên mục Khám Phá
     public function readPublic() {
-        $query = "SELECT d.id, d.title, d.description, u.fullname as author_name,
+        $query = "SELECT d.id, d.title, d.description, u.username as author_name,
                    (SELECT COUNT(*) FROM cards WHERE deck_id = d.id) as cards_count
                   FROM " . $this->table_name . " d
                   LEFT JOIN users u ON d.user_id = u.id
@@ -68,6 +68,46 @@ class Deck {
             return true;
         }
         return false;
+    }
+
+    // Lấy 1 Bộ thẻ và đếm số lượng card của nó
+    public function readSingle() {
+        $query = "SELECT d.id, d.title, d.description, d.is_public, d.created_at, d.user_id,
+                   (SELECT COUNT(*) FROM cards WHERE deck_id = d.id) as cards_count
+                  FROM " . $this->table_name . " d
+                  WHERE d.id = :id LIMIT 0,1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $this->id);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // Cập nhật Bộ thẻ
+    public function update() {
+        $query = "UPDATE " . $this->table_name . "
+                  SET title = :title, description = :description, is_public = :is_public
+                  WHERE id = :id AND user_id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        
+        $this->title = htmlspecialchars(strip_tags($this->title));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+        
+        $stmt->bindParam(':title', $this->title);
+        $stmt->bindParam(':description', $this->description);
+        $stmt->bindParam(':is_public', $this->is_public);
+        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(':user_id', $this->user_id);
+        
+        return $stmt->execute();
+    }
+
+    // Xóa Bộ thẻ
+    public function delete() {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id AND user_id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(':user_id', $this->user_id);
+        return $stmt->execute();
     }
 }
 ?>
