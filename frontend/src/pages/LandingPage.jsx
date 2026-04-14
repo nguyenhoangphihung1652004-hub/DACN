@@ -251,7 +251,7 @@ const LandingPage = () => {
 
       {/* ================= MODAL AUTH ================= */}
       {authMode && (
-        <div className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-6 backdrop-blur-xl duration-300">
+        <div className="animate-in fade-in fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 p-6 backdrop-blur-xl duration-300">
           <div className="absolute inset-0" onClick={closeAuth} />
 
           <div className="animate-in zoom-in-95 relative w-full max-w-lg overflow-hidden rounded-[3.5rem] border border-white bg-white shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] duration-500">

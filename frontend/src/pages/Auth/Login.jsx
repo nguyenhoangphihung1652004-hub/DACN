@@ -40,24 +40,33 @@ const Login = ({ onSwitch }) => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    toast.promise(
-      login({ email, password }),
-      {
-        loading: 'Đang xác thực...',
-        success: 'Đăng nhập thành công!',
-        error: (err) => `${err.response?.data?.message || 'Thông tin không chính xác'}`,
-      }
-    ).then((res) => {
+    try {
+      // Dùng await để đợi kết quả từ toast.promise hoặc hàm login
+      const res = await toast.promise(
+        login({ email, password }),
+        {
+          loading: 'Đang xác thực...',
+          success: 'Đăng nhập thành công!',
+          error: (err) => `${err.response?.data?.message || 'Thông tin không chính xác'}`,
+        }
+      );
+
+      // NẾU THÀNH CÔNG: Mới thực hiện chuyển trang
       if (res && res.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
       }
-    }).catch(() => {});
+    } catch (error) {
+      // NẾU THẤT BẠI (Sai tk/mk): 
+      // Không làm gì cả, không navigate. 
+      // Vì không navigate nên LandingPage không bị render lại, authMode vẫn giữ nguyên 'login'
+      console.error("Login failed:", error);
+    }
   };
 
   return (

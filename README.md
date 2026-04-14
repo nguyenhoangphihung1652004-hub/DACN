@@ -3,6 +3,9 @@
 DACN
 ├─ backend
 │  ├─ api
+│  │  ├─ admin
+│  │  │  ├─ users.php
+│  │  │  └─ user_status.php
 │  │  ├─ auth
 │  │  │  ├─ login.php
 │  │  │  └─ register.php
@@ -14,11 +17,18 @@ DACN
 │  │  ├─ decks
 │  │  │  ├─ clone.php
 │  │  │  ├─ create.php
+│  │  │  ├─ delete.php
 │  │  │  ├─ read.php
-│  │  │  └─ read_public.php
-│  │  └─ review
-│  │     ├─ get_due_cards.php
-│  │     └─ update_progress.php
+│  │  │  ├─ read_public.php
+│  │  │  ├─ read_single.php
+│  │  │  └─ update.php
+│  │  ├─ review
+│  │  │  ├─ get_due_cards.php
+│  │  │  └─ update_progress.php
+│  │  └─ user
+│  │     ├─ profile.php
+│  │     ├─ statistics.php
+│  │     └─ update_profile.php
 │  ├─ config
 │  │  ├─ jwt_helper.php
 │  │  └─ test.php

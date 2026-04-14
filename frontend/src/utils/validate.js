@@ -1,20 +1,31 @@
 export const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+  if (!email) return { isValid: false, message: "Vui lòng nhập Email" };
+  if (/\s/.test(email)) return { isValid: false, message: "Email không được chứa khoảng trắng!" };
+  if (!email.endsWith("@gmail.com")) return { isValid: false, message: "Email phải là @gmail.com!" };
+  
+  const localPart = email.split('@')[0];
+  if (localPart.length < 5 || localPart.length > 15) {
+    return { isValid: false, message: "Tên Gmail (trước @) phải từ 5 đến 15 ký tự!" };
+  }
+  
+  return { isValid: true };
 };
 
 export const validatePassword = (password) => {
-  // Ít nhất 6 ký tự
-  return password && password.length >= 6;
-};
+  if (!password) return { isValid: false, message: "Vui lòng nhập mật khẩu" };
+  
+  // Độ dài 8-32
+  if (password.length < 8 || password.length > 32) {
+    return { isValid: false, message: "Mật khẩu phải từ 8 đến 32 ký tự!" };
+  }
 
-export const getFormErrors = (values) => {
-  const errors = {};
-  if (values.email && !validateEmail(values.email)) {
-    errors.email = "Email không đúng định dạng.";
+  // Chữ cái + (Số hoặc Đặc biệt)
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasNumOrSpec = /[0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
+
+  if (!hasLetter || !hasNumOrSpec) {
+    return { isValid: false, message: "Mật khẩu bao gồm chữ cái và ít nhất một số hoặc ký tự đặc biệt!" };
   }
-  if (values.password && !validatePassword(values.password)) {
-    errors.password = "Mật khẩu phải có ít nhất 6 ký tự.";
-  }
-  return errors;
+
+  return { isValid: true };
 };
