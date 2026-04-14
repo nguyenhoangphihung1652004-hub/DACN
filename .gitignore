@@ -1,6 +1,10 @@
 node_modules/
 frontend/node_modules/
 .env
+backend/.env
 dist/
+frontend/dist/
 .DS_Store
-backend/config/database.php
+Thumbs.db
+.vscode/
+.idea/
