@@ -33,6 +33,7 @@ DACN
 │  │     ├─ statistics.php
 │  │     └─ update_profile.php
 │  ├─ config
+│  │  ├─ database.php
 │  │  ├─ jwt_helper.php
 │  │  └─ test.php
 │  └─ models

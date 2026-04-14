@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import Sidebar from '../components/layout/Sidebar';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
+import Sidebar from '../components/layout/user/Sidebar';
+import Header from '../components/layout/user/Header';
+import Footer from '../components/layout/user/Footer';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -16,13 +16,13 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen flex">
+    <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
 
-      <div className="flex min-h-screen flex-1 flex-col md:ml-64 transition-all duration-300">
+      <div className="flex min-h-screen flex-1 flex-col transition-all duration-300 md:ml-64">
         <Header title={getTitle()} />
 
-        <main className="flex-1 p-8 mt-20">
+        <main className="mt-20 flex-1 p-8">
           <div className="mx-auto w-full max-w-7xl">
             <Outlet />
           </div>
