@@ -31,6 +31,37 @@ const FeatureCard = ({ title, icon, desc }) => (
   </div>
 );
 
+// --- NEW SUB-COMPONENTS ---
+
+const StepCard = ({ step, title, desc, icon }) => (
+  <div className="group relative rounded-4xl border border-slate-100 bg-white p-10 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+    <div className="absolute -top-6 -right-2 z-0 text-8xl font-black text-slate-50 transition-colors duration-500 group-hover:text-slate-100">
+      {step}
+    </div>
+    <div className="relative z-10">
+      <div className="group-hover:bg-primary/10 mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-2xl transition-colors">
+        {icon}
+      </div>
+      <h4 className="mb-3 text-xl font-black text-slate-900">{title}</h4>
+      <p className="text-sm leading-relaxed font-medium text-slate-500">{desc}</p>
+    </div>
+  </div>
+);
+
+const TestimonialCard = ({ name, role, quote, avatar }) => (
+  <div className="group rounded-4xl border border-slate-100 bg-white p-8 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+    <div className="mb-6 flex gap-1 text-sm text-orange-400">★★★★★</div>
+    <p className="mb-8 font-medium leading-relaxed text-slate-600">"{quote}"</p>
+    <div className="flex items-center gap-4">
+      <img src={avatar} alt={name} className="h-12 w-12 rounded-full border-2 border-slate-50 object-cover" />
+      <div>
+        <h5 className="font-black text-slate-900">{name}</h5>
+        <p className="mt-0.5 text-[10px] font-bold tracking-widest text-slate-400 uppercase">{role}</p>
+      </div>
+    </div>
+  </div>
+);
+
 const LandingPage = () => {
   const [authMode, setAuthMode] = useState(null);
   const closeAuth = useCallback(() => setAuthMode(null), []);
@@ -222,6 +253,79 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* ================= HOW IT WORKS (NEW) ================= */}
+        <section className="px-8 py-32">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-20 space-y-4 text-center">
+              <h2 className="text-primary text-[10px] font-black tracking-[0.3em] uppercase">
+                Quy trình học tập
+              </h2>
+              <p className="text-4xl font-black tracking-tight text-slate-900 md:text-5xl">
+                3 bước để ghi nhớ vĩnh viễn
+              </p>
+            </div>
+            
+            <div className="relative grid gap-8 md:grid-cols-3">
+              {/* Connecting line pattern for desktop */}
+              <div className="absolute top-1/2 left-0 -z-10 hidden h-0.5 w-full -translate-y-1/2 border-t-2 border-dashed border-slate-100 md:block"></div>
+              
+              <StepCard 
+                step="01" 
+                title="Tạo bộ thẻ" 
+                desc="Tự do sáng tạo flashcard của riêng bạn hoặc import hàng loạt từ Excel, Quizlet chỉ trong 1 nốt nhạc." 
+                icon="📝" 
+              />
+              <StepCard 
+                step="02" 
+                title="Ôn tập thông minh" 
+                desc="Ứng dụng sẽ tự động tính toán 'điểm rơi quên lãng' để nhắc bạn ôn tập đúng lúc cần thiết nhất." 
+                icon="🔄" 
+              />
+              <StepCard 
+                step="03" 
+                title="Làm chủ kiến thức" 
+                desc="Theo dõi biểu đồ tiến độ. Biến mọi thông tin ngắn hạn từ não bộ đi sâu vào vùng trí nhớ vĩnh cửu." 
+                icon="🏆" 
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* ================= TESTIMONIALS (NEW) ================= */}
+        <section className="bg-slate-50/50 px-8 py-32">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-20 space-y-4 text-center">
+              <h2 className="text-primary text-[10px] font-black tracking-[0.3em] uppercase">
+                Cộng đồng học tập
+              </h2>
+              <p className="text-4xl font-black tracking-tight text-slate-900 md:text-5xl">
+                Hàng ngàn người đã thay đổi cách học
+              </p>
+            </div>
+            
+            <div className="grid gap-8 md:grid-cols-3">
+              <TestimonialCard 
+                name="Hải Đăng" 
+                role="Sinh viên Y Khoa" 
+                quote="Khối lượng kiến thức ngành Y khổng lồ khiến mình từng stress nặng. Từ khi dùng nền tảng này, mình ghi nhớ tên thuốc và giải phẫu nhẹ nhàng hơn hẳn."
+                avatar="https://i.pravatar.cc/100?u=41"
+              />
+              <TestimonialCard 
+                name="Minh Anh" 
+                role="Chinh phục IELTS 8.0" 
+                quote="Thuật toán lặp lại ngắt quãng thực sự là cứu tinh cho việc học từ vựng tiếng Anh. Giao diện lại cực kỳ sạch sẽ và hiện đại, không bị rối mắt chút nào."
+                avatar="https://i.pravatar.cc/100?u=22"
+              />
+              <TestimonialCard 
+                name="Hoàng Nam" 
+                role="Kỹ sư phần mềm" 
+                quote="Mình dùng app để ghi nhớ các design pattern và syntax của ngôn ngữ lập trình mới. Tốc độ nạp kiến thức hiệu quả hơn việc đọc tài liệu chay rất nhiều."
+                avatar="https://i.pravatar.cc/100?u=33"
+              />
+            </div>
+          </div>
+        </section>
+
         {/* ================= CTA BANNER ================= */}
         <section className="px-8 py-32">
           <div className="group relative mx-auto max-w-6xl overflow-hidden rounded-[4rem] bg-slate-900 p-16 md:p-24">
@@ -284,7 +388,11 @@ const LandingPage = () => {
               </div>
 
               <div className="space-y-6">
-                {authMode === 'login' ? <Login onSwitch={() => setAuthMode('register')} /> : <Register onSwitch={() => setAuthMode('login')} />}
+                {authMode === 'login' ? (
+                  <Login onSwitch={() => setAuthMode('register')} />
+                ) : (
+                  <Register onSwitch={() => setAuthMode('login')} />
+                )}
               </div>
 
               <div className="relative flex items-center py-8">
