@@ -2,51 +2,48 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import userApi from '../../api/user.api';
 
 const Profile = () => {
-  const { user, setUser } = useAuth(); // Giả sử useAuth cung cấp setUser để cập nhật local state
+  const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  // Đồng bộ tên từ user context vào state khi component mount hoặc user thay đổi
   useEffect(() => {
-    if (user?.name) {
-      setFullName(user.name);
+    if (user?.username) {
+      setUsername(user.username);
     }
   }, [user]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    
-    if (!fullName.trim()) {
-      return toast.error("Họ và tên không được để trống!");
+
+    if (!username.trim()) {
+      return toast.error('Tên hiển thị không được để trống!');
+    }
+
+    if (password && password !== confirmPassword) {
+      return toast.error('Mật khẩu xác nhận không khớp!');
     }
 
     setLoading(true);
     try {
-      // Gọi API cập nhật thông tin (Thay URL bằng endpoint thật của bạn)
-      const res = await fetch("http://localhost:8000/api/auth/update_profile.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: user.email,
-          fullname: fullName
-        })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success('Cập nhật thông tin thành công!');
-        // Cập nhật lại context để các component khác (như Navbar) nhận tên mới
-        if (setUser) {
-          setUser({ ...user, name: fullName });
-        }
-      } else {
-        toast.error(data.message || 'Có lỗi xảy ra khi cập nhật');
+      const data = { username };
+      if (password) {
+        data.password = password;
       }
-    } catch {
-      toast.error('Lỗi kết nối server!');
+      await userApi.updateProfile(data);
+      toast.success('Cập nhật thông tin thành công!');
+      // Cập nhật context
+      setUser({ ...user, username });
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật'
+      );
     } finally {
       setLoading(false);
     }
@@ -74,7 +71,7 @@ const Profile = () => {
             <div className="flex flex-col gap-6 border-b border-slate-50 pb-8 md:flex-row md:items-center">
               <div className="group relative">
                 <div className="bg-primary/10 text-primary border-primary/20 flex h-24 w-24 items-center justify-center rounded-full border-2 text-4xl font-bold shadow-inner">
-                  {fullName?.charAt(0)?.toUpperCase() || 'U'}
+                  {username?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <button className="hover:text-primary absolute -right-1 -bottom-1 rounded-full border border-slate-100 bg-white p-2 shadow-md transition-colors">
                   📷
@@ -83,7 +80,7 @@ const Profile = () => {
 
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-slate-800">
-                  {fullName || 'Người dùng'}
+                  {username || 'Người dùng'}
                 </h2>
                 <p className="font-medium text-slate-500">{user?.email}</p>
                 <div className="mt-2 inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
@@ -103,12 +100,12 @@ const Profile = () => {
             >
               <div className="space-y-2">
                 <label className="ml-1 text-xs font-bold tracking-wider text-slate-400 uppercase">
-                  Họ và tên
+                  Tên hiển thị
                 </label>
                 <input
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Nhập họ tên của bạn"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Nhập tên hiển thị của bạn"
                   className="focus:ring-primary/20 focus:border-primary w-full rounded-xl border border-slate-200 bg-slate-50 p-3.5 transition-all outline-none focus:ring-2"
                 />
               </div>
@@ -124,14 +121,33 @@ const Profile = () => {
                 />
               </div>
 
-              <div className="flex flex-col justify-end gap-3 pt-4 sm:flex-row md:col-span-2">
-                <button
-                  type="button"
-                  className="rounded-xl bg-slate-100 px-6 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-200 active:scale-95"
-                >
-                  Đổi mật khẩu
-                </button>
+              <div className="space-y-2">
+                <label className="ml-1 text-xs font-bold tracking-wider text-slate-400 uppercase">
+                  Mật khẩu mới (để trống nếu không đổi)
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Nhập mật khẩu mới"
+                  className="focus:ring-primary/20 focus:border-primary w-full rounded-xl border border-slate-200 bg-slate-50 p-3.5 transition-all outline-none focus:ring-2"
+                />
+              </div>
 
+              <div className="space-y-2">
+                <label className="ml-1 text-xs font-bold tracking-wider text-slate-400 uppercase">
+                  Xác nhận mật khẩu
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Nhập lại mật khẩu"
+                  className="focus:ring-primary/20 focus:border-primary w-full rounded-xl border border-slate-200 bg-slate-50 p-3.5 transition-all outline-none focus:ring-2"
+                />
+              </div>
+
+              <div className="flex flex-col justify-end gap-3 pt-4 sm:flex-row md:col-span-2">
                 <button
                   type="submit"
                   disabled={loading}
