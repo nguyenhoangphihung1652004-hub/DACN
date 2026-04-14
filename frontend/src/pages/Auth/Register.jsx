@@ -53,7 +53,7 @@ const Register = ({ onSwitch }) => {
     }
 
     return { 
-      fullname: localPart, 
+      username: localPart, 
       email: email, 
       password: password 
     };
@@ -75,7 +75,7 @@ const Register = ({ onSwitch }) => {
 
       if (res.ok || res.status === 201) {
         toast.success("Đăng ký thành công!");
-        onSwitch(); 
+        if (typeof onSwitch === 'function') onSwitch();  
       } else {
         toast.error(data.message || "Lỗi đăng ký");
       }
