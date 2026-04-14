@@ -26,12 +26,16 @@ if (!empty($data->email) && !empty($data->password)) {
     $password = $data->password;
 
     if (preg_match('/\s/', $email) || !str_ends_with($email, "@gmail.com")) {
-        http_response_code(400); echo json_encode(["message" => "Email không hợp lệ."]); exit();
+        http_response_code(400);
+        echo json_encode(["message" => "Email không hợp lệ."]);
+        exit();
     }
     $localPart = explode('@', $email)[0];
     // Ghi chú: Đã lột bỏ Check độ dài LocalPart và Regex chữ hoa/số của Mật khẩu để tương thích Acc Cũ.
     if (preg_match('/\s/', $password)) {
-        http_response_code(400); echo json_encode(["message" => "Độ dài mật khẩu (10-12) sai hoặc chứa khoảng trắng."]); exit();
+        http_response_code(400);
+        echo json_encode(["message" => "Độ dài mật khẩu (10-12) sai hoặc chứa khoảng trắng."]);
+        exit();
     }
 
     $user->email = $email;
@@ -39,8 +43,14 @@ if (!empty($data->email) && !empty($data->password)) {
 
     // Đối chiếu Password gõ vào với Password đã rải băm (Hash) lưu trong DB
     if ($email_exists && password_verify($password, $user->password_hash)) {
+        if (isset($user->status) && $user->status === 'banned') {
+            http_response_code(403);
+            echo json_encode(array("message" => "Tài khoản của bạn đã bị khóa."));
+            exit();
+        }
+
         http_response_code(200);
-        
+
         // Gói sơ yếu lý lịch vào Payload của Token và cho Hạn dùng 7 Ngày
         $payload = [
             "id" => $user->id,
@@ -51,14 +61,14 @@ if (!empty($data->email) && !empty($data->password)) {
         ];
 
         // Mã hóa HS256 sinh ra Token Chuyên Nghiệp
-        $token = JWT::encode($payload); 
-        
+        $token = JWT::encode($payload);
+
         echo json_encode(
             array(
                 "message" => "Đăng nhập thành công.",
                 "token" => $token,
                 "role" => $user->role,
-                "fullname" => $user->fullname
+                "username" => $user->username
             )
         );
     } else {
@@ -69,4 +79,3 @@ if (!empty($data->email) && !empty($data->password)) {
     http_response_code(400); // Bad request
     echo json_encode(array("message" => "Xin vui lòng điền đủ Email và Mật khẩu."));
 }
-?>
