@@ -5,6 +5,8 @@ DACN
 │  ├─ api
 │  │  ├─ admin
 │  │  │  ├─ decks.php
+│  │  │  ├─ logs.php
+│  │  │  ├─ stats.php
 │  │  │  ├─ users.php
 │  │  │  └─ user_status.php
 │  │  ├─ auth
@@ -36,7 +38,10 @@ DACN
 │  └─ models
 │     ├─ Card.php
 │     ├─ Deck.php
+│     ├─ ReviewLog.php
 │     └─ User.php
+├─ database
+│  └─ database.sql
 ├─ frontend
 │  ├─ .prettierrc
 │  ├─ eslint.config.js
