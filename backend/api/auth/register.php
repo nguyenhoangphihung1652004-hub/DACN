@@ -23,15 +23,10 @@ $user = new User($db);
 // Bắt dữ liệu JSON từ Frontend ReactJS gửi sang
 $data = json_decode(file_get_contents("php://input"));
 
-if (!empty($data->fullname) && !empty($data->email) && !empty($data->password)) {
-    $fullname = trim($data->fullname);
+if (!empty($data->username) && !empty($data->email) && !empty($data->password)) {
+    $username = trim($data->username);
     $email = $data->email;
     $password = $data->password;
-
-    // Validate Fullname (mb_strlen hỡ trợ tiếng việt UTF-8)
-    if (mb_strlen($fullname, 'UTF-8') < 10 || mb_strlen($fullname, 'UTF-8') > 255) {
-        http_response_code(400); echo json_encode(["message" => "Họ và tên phải từ 10 đến 255 ký tự."]); exit();
-    }
 
     // Validate Email
     if (preg_match('/\s/', $email)) {
@@ -41,8 +36,8 @@ if (!empty($data->fullname) && !empty($data->email) && !empty($data->password)) 
         http_response_code(400); echo json_encode(["message" => "Email đăng ký bắt buộc phải là @gmail.com."]); exit();
     }
     $localPart = explode('@', $email)[0];
-    if (strlen($localPart) < 5 || strlen($localPart) > 10 || strlen($email) > 254) {
-        http_response_code(400); echo json_encode(["message" => "Độ dài tài khoản Email trước @ phải từ 5 đến 10 ký tự."]); exit();
+    if (strlen($localPart) < 5 || strlen($localPart) > 15 || strlen($email) > 254) {
+        http_response_code(400); echo json_encode(["message" => "Độ dài tài khoản Email trước @ phải từ 5 đến 15 ký tự."]); exit();
     }
 
     // Validate Password
@@ -59,14 +54,13 @@ if (!empty($data->fullname) && !empty($data->email) && !empty($data->password)) 
 
     // Lọt qua cửa Ải -> nạp vào Model
     $user->email = $email;
-    $data->fullname = $fullname;
 
     // Xem Email đã đụng hàng chưa
     if ($user->emailExists()) {
         http_response_code(409); // Conflict
         echo json_encode(array("message" => "Email này đã được sử dụng!"));
     } else {
-        $user->fullname = $data->fullname;
+        $user->username = $username;
         // Mã hóa mật khẩu bảo mật tuyệt đối
         // Bắt buộc xài PASSWORD_BCRYPT theo chuẩn đồ án CNTT hiện nay
         $user->password_hash = password_hash($data->password, PASSWORD_BCRYPT);
