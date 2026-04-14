@@ -284,7 +284,7 @@ const LandingPage = () => {
               </div>
 
               <div className="space-y-6">
-                {authMode === 'login' ? <Login /> : <Register />}
+                {authMode === 'login' ? <Login onSwitch={() => setAuthMode('register')} /> : <Register onSwitch={() => setAuthMode('login')} />}
               </div>
 
               <div className="relative flex items-center py-8">
