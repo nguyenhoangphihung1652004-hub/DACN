@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 
+const getDisplayName = (user) => user?.username || user?.fullname || user?.name || 'Học viên';
+
 const Header = ({ title = "Bảng điều khiển" }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ const Header = ({ title = "Bảng điều khiển" }) => {
 
   const handleLogout = () => {
     // Lấy tên đầy đủ của người dùng
-    const fullName = user?.name || 'Học viên';
+    const fullName = getDisplayName(user);
     
     logout();
     setOpen(false);
@@ -59,11 +61,11 @@ const Header = ({ title = "Bảng điều khiển" }) => {
             className="flex items-center gap-3 group focus:outline-none bg-slate-50 p-1.5 pr-4 rounded-[1.25rem] hover:bg-slate-100 transition-all active:scale-95"
           >
             <div className="h-9 w-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm overflow-hidden shadow-lg shadow-slate-200 group-hover:bg-primary group-hover:shadow-primary/30 transition-all">
-              {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              {getDisplayName(user).charAt(0).toUpperCase()}
             </div>
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-slate-900 leading-none">
-                {user?.name?.split(' ').pop()}
+                {getDisplayName(user).split(' ').pop()}
               </p>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Học viên</p>
             </div>
@@ -82,7 +84,7 @@ const Header = ({ title = "Bảng điều khiển" }) => {
                     <div className="h-10 w-10 rounded-2xl bg-slate-50 flex items-center justify-center text-lg">👤</div>
                     <div className="overflow-hidden">
                         <p className="text-sm font-black text-slate-900 truncate">
-                            {user?.name}
+                            {getDisplayName(user)}
                         </p>
                         <p className="text-[11px] font-medium text-slate-400 truncate">
                             {user?.email}
