@@ -9,4 +9,5 @@ Thumbs.db
 .vscode/
 .idea/
 backend/uploads/**/*
+!backend/uploads/**/
 !backend/uploads/**/.gitkeep

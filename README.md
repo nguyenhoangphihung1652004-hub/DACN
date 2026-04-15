@@ -31,16 +31,18 @@ DACN
 │  │  └─ user
 │  │     ├─ profile.php
 │  │     ├─ statistics.php
-│  │     └─ update_profile.php
+│  │     ├─ update_profile.php
+│  │     └─ upload_avatar.php
 │  ├─ config
 │  │  ├─ database.php
 │  │  ├─ jwt_helper.php
 │  │  └─ test.php
-│  └─ models
-│     ├─ Card.php
-│     ├─ Deck.php
-│     ├─ ReviewLog.php
-│     └─ User.php
+│  ├─ models
+│  │  ├─ Card.php
+│  │  ├─ Deck.php
+│  │  ├─ ReviewLog.php
+│  │  └─ User.php
+│  └─ uploads
 ├─ database
 │  └─ database.sql
 ├─ frontend
