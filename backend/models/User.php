@@ -10,6 +10,7 @@ class User
     public $password_hash;
     public $role;
     public $status;
+    public $avatar;
 
     public function __construct($db)
     {
@@ -19,7 +20,7 @@ class User
     // Kiem tra xem email ton tai khong
     public function emailExists()
     {
-        $query = "SELECT id, username, password_hash, role, IFNULL(status, 'active') as status
+        $query = "SELECT id, username, password_hash, role, IFNULL(status, 'active') as status, avatar
                   FROM " . $this->table_name . "
                   WHERE email = ?
                   LIMIT 0,1";
@@ -36,6 +37,7 @@ class User
             $this->password_hash = $row['password_hash'];
             $this->role = $row['role'];
             $this->status = $row['status'];
+            $this->avatar = $row['avatar'] ?? null;
             return true;
         }
         return false;
