@@ -106,7 +106,7 @@ const Dashboard = () => {
         </div>
 
         <div
-          onClick={() => stats.due_deck_id && navigate(`/review/${stats.due_deck_id}`)}
+          onClick={() => navigate('/review')}
           className="group relative cursor-pointer overflow-hidden rounded-4xl border border-slate-100 bg-white p-8 shadow-sm transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5"
         >
           <div className="relative z-10 flex items-center justify-between">
