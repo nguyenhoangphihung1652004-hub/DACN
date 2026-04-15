@@ -68,7 +68,8 @@ if (!empty($data->email) && !empty($data->password)) {
                 "message" => "Đăng nhập thành công.",
                 "token" => $token,
                 "role" => $user->role,
-                "username" => $user->username
+                "username" => $user->username,
+                "avatar" => $user->avatar ? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . ltrim($user->avatar, '/') : null
             )
         );
     } else {
