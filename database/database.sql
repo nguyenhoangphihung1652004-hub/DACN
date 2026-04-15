@@ -9,6 +9,7 @@ CREATE TABLE users (
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
+    avatar VARCHAR(255) NULL,
     role ENUM('learner', 'admin') DEFAULT 'learner',
     status ENUM('active', 'banned') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -31,7 +32,6 @@ CREATE TABLE cards (
     deck_id INT NOT NULL,
     front_content TEXT NOT NULL,
     back_content TEXT NOT NULL,
-    image_url VARCHAR(255) NULL,
     repetitions INT DEFAULT 0,
     ease_factor FLOAT DEFAULT 2.5,
     review_interval INT DEFAULT 0,
