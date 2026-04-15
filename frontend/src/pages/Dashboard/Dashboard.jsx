@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   PieChart,
   Pie,
@@ -106,7 +107,13 @@ const Dashboard = () => {
         </div>
 
         <div
-          onClick={() => navigate('/review')}
+          onClick={() => {
+            if (stats?.due_today > 0) {
+              navigate('/review');
+            } else {
+              toast('Chưa có thẻ nào cần ôn tập hôm nay.');
+            }
+          }}
           className="group relative cursor-pointer overflow-hidden rounded-4xl border border-slate-100 bg-white p-8 shadow-sm transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5"
         >
           <div className="relative z-10 flex items-center justify-between">
@@ -173,7 +180,13 @@ const Dashboard = () => {
           </div>
 
           <button
-            onClick={() => navigate('/review')}
+            onClick={() => {
+              if (stats?.due_today > 0) {
+                navigate('/review');
+              } else {
+                toast('Chưa có thẻ nào cần ôn tập hôm nay.');
+              }
+            }}
             className="relative z-10 rounded-2xl bg-indigo-600 px-10 py-4 text-sm font-black tracking-[0.15em] whitespace-nowrap text-white uppercase shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.05] active:scale-95"
           >
             Bắt đầu ôn tập ngay
