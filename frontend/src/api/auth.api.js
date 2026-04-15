@@ -12,10 +12,11 @@ const authApi = {
           role: res.role,
           username: res.username,
           email: data.email,
+          avatar: res.avatar || null,
         })
       );
     }
-    
+
     return res;
   },
 
