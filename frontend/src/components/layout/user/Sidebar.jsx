@@ -11,8 +11,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     if (e) e.preventDefault();
     try {
       const data = await userApi.getStatistics();
-      if (data.due_deck_id) {
-        navigate(`/review/${data.due_deck_id}`);
+      if (data.due_today > 0) {
+        navigate('/review');
       } else {
         toast.error('Không có bộ thẻ nào cần ôn tập');
       }
