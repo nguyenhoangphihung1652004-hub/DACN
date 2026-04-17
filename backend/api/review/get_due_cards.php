@@ -24,14 +24,14 @@ $db = (new Database())->getConnection();
 $deck_id = isset($_GET['deck_id']) ? $_GET['deck_id'] : null;
 
 if ($deck_id) {
-    $query = "SELECT id, front_content, back_content, image_url 
+    $query = "SELECT id, front_content, back_content 
               FROM cards 
               WHERE deck_id = :deck_id AND next_review_date <= CURRENT_DATE
               ORDER BY next_review_date ASC, id ASC";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":deck_id", $deck_id);
 } else {
-    $query = "SELECT c.id, c.front_content, c.back_content, c.image_url 
+    $query = "SELECT c.id, c.front_content, c.back_content 
               FROM cards c
               JOIN decks d ON c.deck_id = d.id
               WHERE d.user_id = :user_id AND c.next_review_date <= CURRENT_DATE
