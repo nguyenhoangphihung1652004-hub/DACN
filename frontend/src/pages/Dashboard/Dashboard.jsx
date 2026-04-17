@@ -67,7 +67,6 @@ const Dashboard = () => {
 
   return (
     <div className="animate-in fade-in space-y-8 duration-500">
-      {/* HEADER TỪ CODE 1 */}
       <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
@@ -89,13 +88,9 @@ const Dashboard = () => {
         </button>
       </header>
 
-      {/* CẤU TRÚC GRID 12 CỘT TỪ CODE 2 */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-        {/* === CỘT TRÁI (8 CỘT) === */}
         <div className="space-y-8 lg:col-span-8">
-          {/* 3 THẺ THỐNG KÊ (CODE 1) */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {/* Tổng bộ thẻ */}
             <div
               onClick={() => navigate('/decks')}
               className="group relative flex h-[160px] cursor-pointer flex-col justify-between overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-indigo-200 hover:shadow-md"
@@ -108,24 +103,18 @@ const Dashboard = () => {
                   📚
                 </span>
               </div>
-
               <p className="relative z-10 text-4xl font-black text-slate-900">
                 {stats?.total_decks || 0}
               </p>
-
-              <div className="absolute -right-4 -bottom-4 text-8xl font-black text-slate-50 transition-all duration-500 group-hover:rotate-12 group-hover:text-indigo-50/80">
+              <div className="pointer-events-none absolute -right-4 -bottom-4 rotate-12 text-8xl font-black text-slate-50 transition-all duration-500 group-hover:rotate-0 group-hover:text-indigo-50/80">
                 #
               </div>
             </div>
 
-            {/* Thẻ cần ôn */}
             <div
               onClick={() => {
-                if (stats?.due_today > 0) {
-                  navigate('/review');
-                } else {
-                  toast('Chưa có thẻ nào cần ôn tập hôm nay.');
-                }
+                if (stats?.due_today > 0) navigate('/review');
+                else toast('Chưa có thẻ nào cần ôn tập hôm nay.');
               }}
               className="group relative flex h-[160px] cursor-pointer flex-col justify-between overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-orange-200 hover:shadow-md"
             >
@@ -144,17 +133,14 @@ const Dashboard = () => {
                   ⏳
                 </span>
               </div>
-
               <p className="relative z-10 text-4xl font-black text-orange-500">
                 {stats?.due_today || 0}
               </p>
-
-              <div className="absolute -right-4 -bottom-4 -rotate-12 text-8xl font-black text-slate-50 transition-all duration-500 group-hover:rotate-0 group-hover:text-orange-50/80">
+              <div className="pointer-events-none absolute -right-4 -bottom-4 rotate-12 text-8xl font-black text-slate-50 transition-all duration-500 group-hover:rotate-0 group-hover:text-orange-50/80">
                 !
               </div>
             </div>
 
-            {/* Tỷ lệ ghi nhớ */}
             <div className="group relative flex h-[160px] flex-col justify-between overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-green-200 hover:shadow-md">
               <div className="relative z-10 flex items-start justify-between">
                 <span className="text-[10px] font-black tracking-widest text-slate-400 uppercase transition-colors group-hover:text-green-600">
@@ -164,18 +150,15 @@ const Dashboard = () => {
                   🎯
                 </span>
               </div>
-
               <p className="relative z-10 text-4xl font-black text-green-600">
                 {stats?.retention_rate || 0}%
               </p>
-
-              <div className="absolute -right-4 -bottom-4 rotate-45 text-8xl font-black text-slate-50 transition-all duration-500 group-hover:rotate-0 group-hover:text-green-50/80">
+              <div className="pointer-events-none absolute -right-4 -bottom-4 rotate-12 text-8xl font-black text-slate-50 transition-all duration-500 group-hover:rotate-0 group-hover:text-green-50/80">
                 %
               </div>
             </div>
           </div>
 
-          {/* BANNER (CODE 1) */}
           {stats?.due_today > 0 && (
             <div className="relative flex flex-col items-center justify-between gap-8 overflow-hidden rounded-[2.5rem] bg-slate-900 p-8 text-white shadow-2xl shadow-slate-200 md:flex-row">
               <div className="absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full bg-indigo-500/20 blur-[100px]"></div>
@@ -229,24 +212,49 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="relative flex-1 space-y-10 before:absolute before:top-2 before:bottom-2 before:left-2.75 before:w-0.5 before:bg-slate-50">
+            <div className="relative flex-1 space-y-5 before:absolute before:top-2 before:bottom-2 before:left-2.75 before:w-0.5 before:bg-slate-50">
               {paginatedActivities.length > 0 ? (
                 paginatedActivities.map((activity, index) => (
                   <div
                     key={index}
-                    className="group relative flex items-start gap-8"
+                    className="group relative flex items-start gap-4"
                   >
                     <div className="z-10 h-6 w-6 shrink-0 rounded-full border-[6px] border-slate-100 bg-white shadow-sm transition-colors group-hover:border-indigo-600"></div>
 
-                    <div className="-mt-1.5 flex-1 rounded-2xl p-4 transition-colors group-hover:bg-slate-50">
-                      <p className="text-base leading-snug font-bold text-slate-800">
-                        {activity.content}
-                      </p>
-                      <div className="mt-2 flex items-center gap-2 text-[11px] font-black tracking-wider text-slate-400 uppercase">
-                        <span className="leading-none text-indigo-600/40">
-                          ●
+                    <div className="-mt-1.5 flex flex-1 items-start justify-between rounded-2xl p-4 transition-colors group-hover:bg-slate-50">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-wrap items-center gap-2 text-sm md:text-base">
+                          <span className="font-medium text-slate-500">
+                            Học thẻ
+                          </span>
+                          <span className="font-bold text-slate-800 italic">
+                            "{activity.card_content}"
+                          </span>
+                          <span className="rounded-md border border-indigo-100 bg-indigo-50 px-2 py-0.5 text-[11px] font-bold text-indigo-600">
+                            {activity.deck_name}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-[11px] font-black tracking-wider text-slate-400 uppercase">
+                          <span className="leading-none text-indigo-600/40">
+                            ●
+                          </span>
+                          {formatDate(activity.time)}
+                        </div>
+                      </div>
+
+                      <div className="ml-4 flex shrink-0">
+                        <span
+                          className={`rounded-full px-3 py-1 text-[10px] font-black tracking-wider uppercase shadow-sm ${
+                            activity.quality_score >= 4
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : activity.quality_score === 3
+                                ? 'bg-amber-100 text-amber-700'
+                                : 'bg-rose-100 text-rose-700'
+                          }`}
+                        >
+                          {activity.quality_text}
                         </span>
-                        {formatDate(activity.time)}
                       </div>
                     </div>
                   </div>
@@ -292,9 +300,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* === CỘT PHẢI (4 CỘT) === */}
         <div className="space-y-8 lg:col-span-4">
-          {/* 1. Tiến độ 7 ngày */}
           <div className="flex h-[160px] flex-col justify-between rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-center justify-between">
               <h3 className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
@@ -305,7 +311,6 @@ const Dashboard = () => {
               </span>
             </div>
 
-            {/* Biểu đồ cột mini */}
             <div className="mt-2 flex h-16 items-end justify-between gap-1.5">
               {weeklyProgress.map((h, i) => (
                 <div
@@ -324,7 +329,6 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {/* Nhãn ngày tháng */}
             <div className="mt-2 flex justify-between px-1 text-[8px] font-black text-slate-400 uppercase">
               {daysOfWeek.map((d, i) => (
                 <span key={i} className={i === 4 ? 'text-indigo-600' : ''}>
@@ -334,7 +338,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* 2. Mục tiêu ngày */}
           <div className="flex h-[160px] flex-col justify-center rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
             <div className="mb-4 flex items-center gap-2">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-600"></span>
@@ -344,7 +347,6 @@ const Dashboard = () => {
             </div>
 
             <div className="space-y-4">
-              {/* Ôn tập thẻ */}
               <div>
                 <div className="mb-1.5 flex justify-between text-[10px] font-black uppercase">
                   <span className="text-slate-500">Ôn tập thẻ</span>
@@ -363,7 +365,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Thời gian học */}
               <div>
                 <div className="mb-1.5 flex justify-between text-[10px] font-black uppercase">
                   <span className="text-slate-500">Thời gian học</span>
@@ -384,7 +385,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* 3. Trạng thái thẻ (Biểu đồ tròn) */}
           <div className="flex min-h-[400px] flex-col rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm transition-all hover:shadow-md">
             <div className="mb-6 flex items-center justify-between">
               <h3 className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
@@ -395,7 +395,6 @@ const Dashboard = () => {
 
             <div className="h-[300px] w-full">
               {' '}
-              {/* Sử dụng h-[300px] thay vì h-64 flex-1 */}
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie

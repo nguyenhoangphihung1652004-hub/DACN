@@ -36,12 +36,10 @@ $stats = [
 ];
 
 try {
-    // 1. Total decks
     $stmtDecks = $db->prepare("SELECT COUNT(*) as count FROM decks WHERE user_id = ?");
     $stmtDecks->execute([$uid]);
-    $stats['total_decks'] = (int)$stmtDecks->fetch(PDO::FETCH_ASSOC)['count'];
+    $stats['total_decks'] = (int) $stmtDecks->fetch(PDO::FETCH_ASSOC)['count'];
 
-    // 2. Cards metrics
     $queryCards = "SELECT 
                       SUM(CASE WHEN next_review_date <= CURDATE() THEN 1 ELSE 0 END) as due_today,
                       SUM(CASE WHEN repetitions = 0 THEN 1 ELSE 0 END) as new_cards,
@@ -53,13 +51,12 @@ try {
     $stmtCards = $db->prepare($queryCards);
     $stmtCards->execute([$uid]);
     if ($rowCards = $stmtCards->fetch(PDO::FETCH_ASSOC)) {
-        $stats['due_today'] = (int)$rowCards['due_today'];
-        $stats['new_cards'] = (int)$rowCards['new_cards'];
-        $stats['learning_cards'] = (int)$rowCards['learning_cards'];
-        $stats['mastered_cards'] = (int)$rowCards['mastered_cards'];
+        $stats['due_today'] = (int) $rowCards['due_today'];
+        $stats['new_cards'] = (int) $rowCards['new_cards'];
+        $stats['learning_cards'] = (int) $rowCards['learning_cards'];
+        $stats['mastered_cards'] = (int) $rowCards['mastered_cards'];
     }
 
-    // 3. Retention Rate
     $queryLogs = "SELECT COUNT(*) as total_reviews, 
                          SUM(CASE WHEN quality >= 3 THEN 1 ELSE 0 END) as correct_reviews
                   FROM review_logs WHERE user_id = ?";
@@ -67,21 +64,21 @@ try {
     $stmtLogs->execute([$uid]);
     $rowLogs = $stmtLogs->fetch(PDO::FETCH_ASSOC);
 
-    $totalReviews = (int)$rowLogs['total_reviews'];
-    $correctReviews = (int)$rowLogs['correct_reviews'];
+    $totalReviews = (int) $rowLogs['total_reviews'];
+    $correctReviews = (int) $rowLogs['correct_reviews'];
 
     if ($totalReviews > 0) {
         $stats['retention_rate'] = round(($correctReviews / $totalReviews) * 100);
     } else {
-        $stats['retention_rate'] = 100; // default state is 100%
+        $stats['retention_rate'] = 100;
     }
 
-    // 4. Recent activities
-    $queryActivities = "SELECT r.quality, r.reviewed_at as time, c.front_content 
-                        FROM review_logs r
-                        JOIN cards c ON r.card_id = c.id
-                        WHERE r.user_id = ?
-                        ORDER BY r.reviewed_at DESC LIMIT 5";
+    $queryActivities = "SELECT r.quality, r.reviewed_at as time, c.front_content, d.title as deck_name
+                    FROM review_logs r
+                    JOIN cards c ON r.card_id = c.id
+                    JOIN decks d ON c.deck_id = d.id
+                    WHERE r.user_id = ?
+                    ORDER BY r.reviewed_at DESC LIMIT 5";
     $stmtActivities = $db->prepare($queryActivities);
     $stmtActivities->execute([$uid]);
 
@@ -92,20 +89,24 @@ try {
         5 => 'Ghi nhớ Rất Dễ'
     ];
 
-    while ($row = $stmtActivities->fetch(PDO::FETCH_ASSOC)) {
-        $frontStr = mb_strlen($row['front_content']) > 25
-            ? mb_substr($row['front_content'], 0, 25) . "..."
-            : $row['front_content'];
+// FILE: statistics.php (hoặc file PHP tương ứng)
 
-        $qText = isset($qualitiesTranslate[$row['quality']]) ? $qualitiesTranslate[$row['quality']] : 'Ôn tập';
+while ($row = $stmtActivities->fetch(PDO::FETCH_ASSOC)) {
+    $frontStr = mb_strlen($row['front_content']) > 25
+        ? mb_substr($row['front_content'], 0, 25) . "..."
+        : $row['front_content'];
+    
+    $qText = isset($qualitiesTranslate[$row['quality']]) ? $qualitiesTranslate[$row['quality']] : 'Ôn tập';
+    
+    $stats['recent_activities'][] = [
+        'time' => $row['time'],
+        'card_content' => $frontStr,
+        'deck_name' => $row['deck_name'],
+        'quality_text' => $qText,
+        'quality_score' => $row['quality'] // Dùng để định dạng màu ở Frontend
+    ];
+}
 
-        $stats['recent_activities'][] = [
-            'time' => $row['time'],
-            'content' => "Đã xem thẻ: \"{$frontStr}\" ({$qText})"
-        ];
-    }
-
-    // 5. Due deck
     $queryDueDeck = "SELECT d.id FROM decks d
                  JOIN cards c ON c.deck_id = d.id
                  WHERE d.user_id = ? AND c.next_review_date <= CURDATE()
@@ -113,7 +114,7 @@ try {
     $stmtDueDeck = $db->prepare($queryDueDeck);
     $stmtDueDeck->execute([$uid]);
     $rowDueDeck = $stmtDueDeck->fetch(PDO::FETCH_ASSOC);
-    $stats['due_deck_id'] = $rowDueDeck ? (int)$rowDueDeck['id'] : null;
+    $stats['due_deck_id'] = $rowDueDeck ? (int) $rowDueDeck['id'] : null;
 
     http_response_code(200);
     echo json_encode($stats);
