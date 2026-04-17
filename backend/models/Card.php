@@ -36,8 +36,12 @@ class Card
 
     public function create()
     {
+        // Nếu chưa có ngày ôn tập, mặc định là hôm nay
+        if (!$this->next_review_date) {
+            $this->next_review_date = date('Y-m-d');
+        }
         $query = "INSERT INTO " . $this->table_name . "
-                  SET deck_id=:deck_id, front_content=:front_content, back_content=:back_content, next_review_date=CURRENT_DATE";
+                  SET deck_id=:deck_id, front_content=:front_content, back_content=:back_content, next_review_date=:next_review_date";
 
         $stmt = $this->conn->prepare($query);
 
@@ -47,6 +51,7 @@ class Card
         $stmt->bindParam(":deck_id", $this->deck_id);
         $stmt->bindParam(":front_content", $this->front_content);
         $stmt->bindParam(":back_content", $this->back_content);
+        $stmt->bindParam(":next_review_date", $this->next_review_date);
 
         if ($stmt->execute()) {
             return true;
