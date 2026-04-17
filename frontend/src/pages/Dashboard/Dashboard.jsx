@@ -42,6 +42,13 @@ const Dashboard = () => {
     return stats.recent_activities.slice(startIndex, startIndex + itemsPerPage);
   }, [stats?.recent_activities, currentPage]);
 
+  const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+
+  const todayIndex = useMemo(() => {
+    const day = new Date().getDay();
+    return day === 0 ? 6 : day - 1;
+  }, []);
+
   const totalPages = Math.ceil(
     (stats?.recent_activities?.length || 0) / itemsPerPage
   );
@@ -62,8 +69,7 @@ const Dashboard = () => {
     },
   ];
 
-  const weeklyProgress = stats?.weekly_progress || [40, 65, 85, 60, 95, 50, 20];
-  const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+  const weeklyProgress = stats?.weekly_progress || [0, 0, 0, 0, 0, 0, 0];
 
   return (
     <div className="animate-in fade-in space-y-8 duration-500">
@@ -93,7 +99,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div
               onClick={() => navigate('/decks')}
-              className="group relative flex h-[160px] cursor-pointer flex-col justify-between overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-indigo-200 hover:shadow-md"
+              className="group relative flex h-40 cursor-pointer flex-col justify-between overflow-hidden rounded-4xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-indigo-200 hover:shadow-md"
             >
               <div className="relative z-10 flex items-start justify-between">
                 <span className="text-[10px] font-black tracking-widest text-slate-400 uppercase transition-colors group-hover:text-indigo-600">
@@ -116,7 +122,7 @@ const Dashboard = () => {
                 if (stats?.due_today > 0) navigate('/review');
                 else toast('Chưa có thẻ nào cần ôn tập hôm nay.');
               }}
-              className="group relative flex h-[160px] cursor-pointer flex-col justify-between overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-orange-200 hover:shadow-md"
+              className="group relative flex h-40 cursor-pointer flex-col justify-between overflow-hidden rounded-4xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-orange-200 hover:shadow-md"
             >
               <div className="relative z-10 flex items-start justify-between">
                 <div className="flex flex-col gap-1">
@@ -141,7 +147,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="group relative flex h-[160px] flex-col justify-between overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-green-200 hover:shadow-md">
+            <div className="group relative flex h-40 flex-col justify-between overflow-hidden rounded-4xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-green-200 hover:shadow-md">
               <div className="relative z-10 flex items-start justify-between">
                 <span className="text-[10px] font-black tracking-widest text-slate-400 uppercase transition-colors group-hover:text-green-600">
                   Ghi nhớ
@@ -196,7 +202,6 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* HOẠT ĐỘNG GẦN ĐÂY (CODE 1) */}
           <div className="flex flex-col rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-sm">
             <div className="mb-10 flex items-center justify-between">
               <div>
@@ -301,7 +306,7 @@ const Dashboard = () => {
         </div>
 
         <div className="space-y-8 lg:col-span-4">
-          <div className="flex h-[160px] flex-col justify-between rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+          <div className="flex h-40 flex-col justify-between rounded-4xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-center justify-between">
               <h3 className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                 Tiến độ 7 ngày
@@ -319,9 +324,9 @@ const Dashboard = () => {
                 >
                   <div
                     className={`absolute bottom-0 w-full rounded-t-md transition-all duration-700 ${
-                      i === 4
+                      i === todayIndex
                         ? 'bg-indigo-600 shadow-[0_-4px_10px_rgba(79,70,229,0.2)]'
-                        : 'bg-indigo-200 group-hover:bg-indigo-300'
+                        : 'bg-indigo-200'
                     }`}
                     style={{ height: `${h}%` }}
                   ></div>
@@ -331,14 +336,17 @@ const Dashboard = () => {
 
             <div className="mt-2 flex justify-between px-1 text-[8px] font-black text-slate-400 uppercase">
               {daysOfWeek.map((d, i) => (
-                <span key={i} className={i === 4 ? 'text-indigo-600' : ''}>
+                <span
+                  key={i}
+                  className={i === todayIndex ? 'text-indigo-600' : ''}
+                >
                   {d}
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="flex h-[160px] flex-col justify-center rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+          <div className="flex h-40 flex-col justify-center rounded-4xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
             <div className="mb-4 flex items-center gap-2">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-600"></span>
               <h3 className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
@@ -385,7 +393,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="flex min-h-[400px] flex-col rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm transition-all hover:shadow-md">
+          <div className="flex min-h-100 flex-col rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm transition-all hover:shadow-md">
             <div className="mb-6 flex items-center justify-between">
               <h3 className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                 Trạng thái thẻ
@@ -393,7 +401,7 @@ const Dashboard = () => {
               <span className="text-xl">📊</span>
             </div>
 
-            <div className="h-[300px] w-full">
+            <div className="h-75 w-full">
               {' '}
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>

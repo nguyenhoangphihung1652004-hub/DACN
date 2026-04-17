@@ -89,23 +89,21 @@ try {
         5 => 'Ghi nhớ Rất Dễ'
     ];
 
-// FILE: statistics.php (hoặc file PHP tương ứng)
+    while ($row = $stmtActivities->fetch(PDO::FETCH_ASSOC)) {
+        $frontStr = mb_strlen($row['front_content']) > 25
+            ? mb_substr($row['front_content'], 0, 25) . "..."
+            : $row['front_content'];
 
-while ($row = $stmtActivities->fetch(PDO::FETCH_ASSOC)) {
-    $frontStr = mb_strlen($row['front_content']) > 25
-        ? mb_substr($row['front_content'], 0, 25) . "..."
-        : $row['front_content'];
-    
-    $qText = isset($qualitiesTranslate[$row['quality']]) ? $qualitiesTranslate[$row['quality']] : 'Ôn tập';
-    
-    $stats['recent_activities'][] = [
-        'time' => $row['time'],
-        'card_content' => $frontStr,
-        'deck_name' => $row['deck_name'],
-        'quality_text' => $qText,
-        'quality_score' => $row['quality'] // Dùng để định dạng màu ở Frontend
-    ];
-}
+        $qText = isset($qualitiesTranslate[$row['quality']]) ? $qualitiesTranslate[$row['quality']] : 'Ôn tập';
+
+        $stats['recent_activities'][] = [
+            'time' => $row['time'],
+            'card_content' => $frontStr,
+            'deck_name' => $row['deck_name'],
+            'quality_text' => $qText,
+            'quality_score' => $row['quality']
+        ];
+    }
 
     $queryDueDeck = "SELECT d.id FROM decks d
                  JOIN cards c ON c.deck_id = d.id
@@ -115,6 +113,41 @@ while ($row = $stmtActivities->fetch(PDO::FETCH_ASSOC)) {
     $stmtDueDeck->execute([$uid]);
     $rowDueDeck = $stmtDueDeck->fetch(PDO::FETCH_ASSOC);
     $stats['due_deck_id'] = $rowDueDeck ? (int) $rowDueDeck['id'] : null;
+
+    $weekly_progress = [];
+    $monday = date('Y-m-d', strtotime('monday this week'));
+
+    for ($i = 0; $i < 7; $i++) {
+        $date = date('Y-m-d', strtotime("$monday +$i days"));
+
+        $queryWeekly = "SELECT COUNT(*) as count FROM review_logs 
+                    WHERE user_id = ? AND DATE(reviewed_at) = ?";
+        $stmtWeekly = $db->prepare($queryWeekly);
+        $stmtWeekly->execute([$uid, $date]);
+        $count = (int) $stmtWeekly->fetch(PDO::FETCH_ASSOC)['count'];
+
+        $max_daily_cards = 50;
+        $height_percentage = ($count / $max_daily_cards) * 100;
+        $weekly_progress[] = min($height_percentage, 100);
+    }
+    $stats['weekly_progress'] = $weekly_progress;
+
+    $queryToday = "SELECT COUNT(*) as current_reviewed FROM review_logs 
+               WHERE user_id = ? AND DATE(reviewed_at) = CURDATE()";
+    $stmtToday = $db->prepare($queryToday);
+    $stmtToday->execute([$uid]);
+    $current_reviewed = (int) $stmtToday->fetch(PDO::FETCH_ASSOC)['current_reviewed'];
+
+    $estimated_minutes = round(($current_reviewed * 15) / 60);
+
+    $stats['daily_cards_goal'] = [
+        'current' => $current_reviewed,
+        'target' => 50
+    ];
+    $stats['daily_time_goal'] = [
+        'current' => $estimated_minutes,
+        'target' => 30
+    ];
 
     http_response_code(200);
     echo json_encode($stats);
