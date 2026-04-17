@@ -44,7 +44,7 @@ const ReviewPage = () => {
     return () => (mounted = false);
   }, [id]);
 
-  const handleReview = useCallback(async (quality) => {
+const handleReview = useCallback(async (quality) => {
     const currentCard = cards[currentIndex];
     if (!currentCard) return;
 
@@ -57,8 +57,20 @@ const ReviewPage = () => {
         if (currentIndex < cards.length - 1) {
           setCurrentIndex((prev) => prev + 1);
         } else {
-          toast.success('🎉 Tuyệt vời! Bạn đã hoàn thành mục tiêu hôm nay.');
-          setTimeout(() => navigate('/dashboard'), 1500);
+          toast('Tuyệt vời! Bạn đã hoàn thành mục tiêu hôm nay.', {
+            icon: '🎉',
+            style: {
+              borderRadius: '16px',
+              background: '#ffffff',
+              color: '#1e293b',
+              border: '1px solid #e2e8f0',
+              padding: '16px',
+              fontWeight: '600',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            },
+          });
+          
+          setTimeout(() => navigate('/dashboard'), 2000);
         }
       }, 250);
     } catch {

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import reviewApi from '../../api/review.api';
 import { useParams, useNavigate } from 'react-router-dom';
 import cardApi from '../../api/card.api';
 import deckApi from '../../api/deck.api';
@@ -16,6 +17,7 @@ const DeckDetail = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [checkingReview, setCheckingReview] = useState(false);
 
   const [isEditDeckOpen, setIsEditDeckOpen] = useState(false);
   const [editDeckData, setEditDeckData] = useState({
@@ -190,6 +192,41 @@ const DeckDetail = () => {
     return filteredCards.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredCards, currentPage]);
 
+  const handleStartReview = async () => {
+    if (cards.length === 0) {
+      return toast.error('Bộ thẻ này chưa có thẻ nào để ôn tập!');
+    }
+
+    setCheckingReview(true);
+    try {
+      const dueCards = await reviewApi.getDueCards(id);
+
+      if (dueCards && dueCards.length > 0) {
+        navigate(`/review/${id}`);
+      } else {
+        toast(
+          'Tuyệt vời! Bạn đã hoàn thành hết các thẻ cần ôn tập cho hôm nay.',
+          {
+            icon: '🎉',
+            style: {
+              borderRadius: '16px',
+              background: '#ffffff',
+              color: '#1e293b',
+              border: '1px solid #e2e8f0',
+              padding: '16px',
+              fontWeight: '600',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            },
+          }
+        );
+      }
+    } catch {
+      toast.error('Không thể kiểm tra lịch ôn tập');
+    } finally {
+      setCheckingReview(false);
+    }
+  };
+
   if (loading) return <Loading />;
 
   if (!deck) {
@@ -279,14 +316,22 @@ const DeckDetail = () => {
               {deck?.description || 'Bộ thẻ này chưa có mô tả.'}
             </p>
           </div>
-
           <button
-            onClick={() => navigate(`/review/${id}`)}
-            disabled={cards.length === 0}
+            onClick={handleStartReview}
+            disabled={cards.length === 0 || checkingReview}
             className="relative z-10 flex cursor-pointer items-center justify-center gap-3 rounded-2xl bg-indigo-600 px-10 py-4 font-black text-white shadow-xl shadow-indigo-200 transition-all hover:scale-[1.02] hover:bg-indigo-700 active:scale-95 disabled:opacity-50 disabled:grayscale"
           >
-            <span className="text-xl">▶</span>
-            Bắt đầu ôn tập
+            {checkingReview ? (
+              <span className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                Đang kiểm tra...
+              </span>
+            ) : (
+              <>
+                <span className="text-xl">▶</span>
+                Bắt đầu ôn tập
+              </>
+            )}
           </button>
         </div>
       </div>
