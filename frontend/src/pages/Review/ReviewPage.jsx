@@ -178,7 +178,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-red-600 uppercase">
                 Lặp lại
               </span>
-              <span className="text-[10px] text-red-400">&lt; 1 phút</span>
+              <span className="text-[10px] text-red-400">Chưa nhớ</span>
             </button>
 
             <button
@@ -191,7 +191,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-orange-600 uppercase">
                 Khó
               </span>
-              <span className="text-[10px] text-orange-400">2 ngày</span>
+              <span className="text-[10px] text-orange-400">Mơ hồ</span>
             </button>
 
             <button
@@ -204,7 +204,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-indigo-600 uppercase">
                 Tốt
               </span>
-              <span className="text-[10px] text-indigo-400">4 ngày</span>
+              <span className="text-[10px] text-indigo-400">Đã nhớ</span>
             </button>
 
             <button
@@ -217,7 +217,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-emerald-600 uppercase">
                 Dễ
               </span>
-              <span className="text-[10px] text-emerald-400">7 ngày</span>
+              <span className="text-[10px] text-emerald-400">Thuộc lòng</span>
             </button>
           </div>
         ) : (
