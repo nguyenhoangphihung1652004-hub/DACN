@@ -13,40 +13,6 @@ const QUALITY = {
   EASY: 5,
 };
 
-// 1. Hàm format hiển thị ngày cho đẹp
-const formatInterval = (days) => {
-  if (days <= 0) return '< 1 phút';
-  if (days === 1) return '1 ngày';
-  if (days < 30) return `${days} ngày`;
-  if (days < 365) return `${Math.floor(days / 30)} tháng`;
-  return `${Math.floor(days / 365)} năm`;
-};
-
-// 2. Hàm mô phỏng chính xác thuật toán SM-2 từ Backend
-const getNextInterval = (quality, card) => {
-  if (!card) return '';
-
-  // Lấy dữ liệu hiện tại của thẻ (Hỗ trợ cả snake_case và camelCase đề phòng API mapping)
-  let reps = Number(card.repetitions || 0);
-  let interval = Number(card.review_interval || card.reviewInterval || 1);
-  let ef = Number(card.ease_factor || card.easeFactor || 2.5); // Default EF của SM-2 thường là 2.5
-
-  if (quality < 3) {
-    // Trả lời sai (AGAIN): Reset về 1 ngày
-    return formatInterval(1);
-  } else {
-    // Trả lời đúng (HARD, GOOD, EASY): Tăng tiến trình
-    reps += 1;
-    if (reps === 1) {
-      return formatInterval(1);
-    } else if (reps === 2) {
-      return formatInterval(6);
-    } else {
-      return formatInterval(Math.round(interval * ef));
-    }
-  }
-};
-
 const ReviewPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -92,7 +58,7 @@ const ReviewPage = () => {
           if (currentIndex < cards.length - 1) {
             setCurrentIndex((prev) => prev + 1);
           } else {
-            toast('Tuyệt vời! Bạn đã hoàn thành mục tiêu hôm nay.', {
+            toast('Tuyệt vời! Bạn đã hoàn thành mục tiêu hôm nay', {
               icon: '🎉',
               style: {
                 borderRadius: '16px',
@@ -212,9 +178,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-red-600 uppercase">
                 Lặp lại
               </span>
-              <span className="text-[10px] text-red-400">
-                {getNextInterval(QUALITY.AGAIN, currentCard)}
-              </span>
+              <span className="text-[10px] text-red-400">&lt; 1 phút</span>
             </button>
 
             <button
@@ -227,9 +191,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-orange-600 uppercase">
                 Khó
               </span>
-              <span className="text-[10px] text-orange-400">
-                {getNextInterval(QUALITY.HARD, currentCard)}
-              </span>
+              <span className="text-[10px] text-orange-400">2 ngày</span>
             </button>
 
             <button
@@ -242,9 +204,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-indigo-600 uppercase">
                 Tốt
               </span>
-              <span className="text-[10px] text-indigo-400">
-                {getNextInterval(QUALITY.GOOD, currentCard)}
-              </span>
+              <span className="text-[10px] text-indigo-400">4 ngày</span>
             </button>
 
             <button
@@ -257,9 +217,7 @@ const ReviewPage = () => {
               <span className="text-xs font-black text-emerald-600 uppercase">
                 Dễ
               </span>
-              <span className="text-[10px] text-emerald-400">
-                {getNextInterval(QUALITY.EASY, currentCard)}
-              </span>
+              <span className="text-[10px] text-emerald-400">7 ngày</span>
             </button>
           </div>
         ) : (

@@ -52,6 +52,6 @@ CREATE TABLE review_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- LÙI NGÀY ĐỂ THẺ XUẤT HIỆN TRONG PHIÊN ÔN TẬP
--- UPDATE cards 
+-- UPDATE cards
 -- SET next_review_date = DATE_SUB(next_review_date, INTERVAL 1 DAY)
 -- WHERE id IN (1, 2);
