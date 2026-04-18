@@ -17,6 +17,9 @@ DACN
 │  │  │  ├─ delete.php
 │  │  │  ├─ read.php
 │  │  │  └─ update.php
+│  │  ├─ cron
+│  │  │  ├─ send_reminder_emails.php
+│  │  │  └─ test_send_reminder.php
 │  │  ├─ decks
 │  │  │  ├─ clone.php
 │  │  │  ├─ create.php
@@ -28,6 +31,7 @@ DACN
 │  │  ├─ review
 │  │  │  ├─ get_due_cards.php
 │  │  │  └─ update_progress.php
+│  │  ├─ test_db.php
 │  │  └─ user
 │  │     ├─ profile.php
 │  │     ├─ statistics.php
@@ -35,6 +39,7 @@ DACN
 │  │     └─ upload_avatar.php
 │  ├─ config
 │  │  ├─ database.php
+│  │  ├─ email_config.php
 │  │  ├─ jwt_helper.php
 │  │  └─ test.php
 │  ├─ models
