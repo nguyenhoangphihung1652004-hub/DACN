@@ -9,7 +9,6 @@ const Flashcard = ({ card, isFlipped, onFlip }) => {
         style={{ transformStyle: 'preserve-3d' }}
       >
         
-        {/* MẶT TRƯỚC (CÂU HỎI) */}
         <div 
           className="absolute inset-0 flex flex-col items-center justify-center rounded-[2.5rem] bg-white p-8 text-center border-b-4 border-slate-200 overflow-hidden"
           style={{ backfaceVisibility: 'hidden' }}
@@ -23,7 +22,6 @@ const Flashcard = ({ card, isFlipped, onFlip }) => {
           </div>
 
           <div className="relative z-10 w-full flex flex-col items-center gap-6">
-            {/* Hiển thị ảnh mặt trước nếu có */}
             {card.front_image_url && (
               <div className="max-h-48 w-full overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
                 <img 
@@ -46,7 +44,6 @@ const Flashcard = ({ card, isFlipped, onFlip }) => {
           </div>
         </div>
 
-        {/* MẶT SAU (ĐÁP ÁN) */}
         <div 
           className="absolute inset-0 flex rotate-y-180 flex-col items-center justify-center rounded-[2.5rem] bg-slate-900 p-8 text-center text-white shadow-inner overflow-hidden"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
@@ -60,7 +57,6 @@ const Flashcard = ({ card, isFlipped, onFlip }) => {
           </div>
 
           <div className="z-10 flex flex-col items-center gap-6 w-full">
-            {/* Hiển thị ảnh mặt sau nếu có */}
             {card.back_image_url && (
               <div className="max-h-48 w-full overflow-hidden rounded-2xl border border-white/10 shadow-lg">
                 <img 

@@ -7,7 +7,6 @@ import Footer from '../components/layout/admin/Footer';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  // State quản lý việc thu/phóng sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const menuItems = [

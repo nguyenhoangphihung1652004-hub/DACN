@@ -4,7 +4,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Đã loại bỏ gọi API và logic Toast để chuyển hướng thẳng
   const handleReviewClick = (e) => {
     if (e) e.preventDefault();
     navigate('/review');
@@ -29,7 +28,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         isOpen ? 'w-64 px-6' : 'w-24 px-4'
       }`}
     >
-      {/* Nút Toggle Sidebar */}
       <button
         onClick={toggleSidebar}
         className="absolute top-1/2 -right-4 z-50 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md transition-all hover:bg-slate-900 hover:text-white"
@@ -39,7 +37,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </span>
       </button>
 
-      {/* Logo Section */}
       <div
         className={`group relative mb-10 flex items-center justify-center overflow-hidden rounded-4xl bg-slate-50 py-4 transition-all duration-300 ${
           isOpen ? 'px-2' : 'px-0'
@@ -57,7 +54,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </Link>
       </div>
 
-      {/* Navigation Menu */}
       <nav className="flex-1 space-y-2">
         <p
           className={`mb-4 text-[10px] font-black tracking-[0.2em] whitespace-nowrap text-slate-400 uppercase transition-all duration-300 ${
@@ -112,7 +108,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         })}
       </nav>
 
-      {/* Quick Action Section */}
       <div className="mt-auto border-t border-slate-50 pt-6">
         <div
           className={`bg-primary/5 border-primary/10 group relative overflow-hidden rounded-4xl border transition-all duration-300 ${

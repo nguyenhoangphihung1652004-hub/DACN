@@ -52,7 +52,6 @@ const Header = () => {
               onClick={() => setOpen(!open)}
               className="group flex items-center gap-3 rounded-[1.25rem] bg-slate-50 p-1.5 pr-4 transition-all hover:bg-slate-100 focus:outline-none active:scale-95"
             >
-              {/* Avatar Container: Đã sửa màu nền bg-primary/10 để ảnh sáng hơn */}
               <div className="group-hover:bg-primary group-hover:shadow-primary/30 flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-primary/10 text-sm font-black text-primary shadow-lg shadow-slate-200 transition-all">
                 {user?.avatar ? (
                   <img
@@ -140,7 +139,6 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Logout Confirmation Modal */}
       {isLogoutModalOpen && (
         <div className="animate-in fade-in fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 p-6 backdrop-blur-md duration-300">
           <div

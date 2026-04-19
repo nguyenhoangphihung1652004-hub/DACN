@@ -4,7 +4,6 @@ const Footer = () => {
   return (
     <footer className="mt-auto border-t border-slate-100 bg-white/50 py-8 px-8 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
 
-      {/* Phần Bản quyền */}
       <div className="flex items-center gap-3">
         <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
         <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">
@@ -12,7 +11,6 @@ const Footer = () => {
         </p>
       </div>
 
-      {/* Phần Mạng xã hội / Liên hệ */}
       <div className="flex items-center gap-8">
         {[
           { label: 'Facebook', path: 'https://web.facebook.com/adminpro21223' },

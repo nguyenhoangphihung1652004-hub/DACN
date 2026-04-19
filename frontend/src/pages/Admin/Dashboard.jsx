@@ -215,11 +215,8 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* CHÚ Ý: Đã thêm items-start vào đây */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
         
-        {/* CỘT TRÁI: NHẬT KÝ HỆ THỐNG */}
-        {/* Đã xóa min-h-125, thêm h-fit */}
         <div className="flex flex-col rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-sm lg:col-span-8 h-fit">
           <div className="mb-8 flex items-center justify-between">
             <div>

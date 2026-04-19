@@ -6,7 +6,6 @@ import Footer from '../components/layout/user/Footer';
 
 const MainLayout = () => {
   const location = useLocation();
-  // State quản lý đóng/mở Sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const getTitle = () => {
