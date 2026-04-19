@@ -3,7 +3,6 @@ import Button from '../common/Button';
 import Input from '../common/Input';
 
 const CardForm = ({ initialData, onSubmit, onCancel }) => {
-  // Đồng bộ key với Backend: front_content, back_content, front_image_url, back_image_url
   const [formData, setFormData] = useState(initialData || { 
     front_content: '', 
     back_content: '',
@@ -18,7 +17,6 @@ const CardForm = ({ initialData, onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* MẶT TRƯỚC */}
       <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-3">
         <Input 
           label="Nội dung mặt trước" 
@@ -35,7 +33,6 @@ const CardForm = ({ initialData, onSubmit, onCancel }) => {
         />
       </div>
 
-      {/* MẶT SAU */}
       <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 space-y-3">
         <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-slate-700">Nội dung mặt sau</label>

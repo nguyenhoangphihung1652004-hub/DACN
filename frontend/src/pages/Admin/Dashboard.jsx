@@ -325,8 +325,6 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        {/* CỘT PHẢI: CẤU TRÚC DỮ LIỆU (BIỂU ĐỒ) */}
-        {/* Đã thêm h-fit, sticky và top-8 */}
         <div className="flex flex-col rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-sm lg:col-span-4 h-fit sticky top-8">
           <div className="mb-8 flex items-center justify-between">
             <div>
@@ -358,9 +356,9 @@ const AdminDashboard = () => {
                   stroke="none"
                 >
                   {[
-                    '#4F46E5', // Indigo
-                    '#10B981', // Emerald
-                    '#F59E0B', // Amber
+                    '#4F46E5',
+                    '#10B981',
+                    '#F59E0B',
                   ].map((color, index) => (
                     <Cell key={`cell-${index}`} fill={color} className="outline-none" />
                   ))}
