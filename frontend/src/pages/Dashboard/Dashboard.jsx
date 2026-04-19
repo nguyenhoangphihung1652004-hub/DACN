@@ -217,7 +217,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="relative flex-1 space-y-5 before:absolute before:top-2 before:bottom-2 before:left-2.75 before:w-0.5 before:bg-slate-50">
+            <div className="relative flex-1 space-y-8 before:absolute before:top-2 before:bottom-2 before:left-2.75 before:w-0.5 before:bg-slate-50">
               {paginatedActivities.length > 0 ? (
                 paginatedActivities.map((activity, index) => (
                   <div
@@ -280,7 +280,7 @@ const Dashboard = () => {
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-10 flex items-center justify-between border-t border-slate-50">
+              <div className="flex items-center justify-between border-t border-slate-50">
                 <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                   Trang {currentPage} / {totalPages}
                 </p>
