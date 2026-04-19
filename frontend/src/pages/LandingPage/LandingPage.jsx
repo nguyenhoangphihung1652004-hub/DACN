@@ -475,14 +475,31 @@ const LandingPage = () => {
         </div>
 
         <div className="flex justify-center gap-10 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-          <a href="#" className="hover:text-primary transition-colors">
+          <a
+            href="https://web.facebook.com/adminpro21223"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
             Facebook
           </a>
-          <a href="#" className="hover:text-primary transition-colors">
+
+          <a
+            href="https://github.com/HuyQuocNewBie/DACN"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
             GitHub
           </a>
-          <a href="#" className="hover:text-primary transition-colors">
-            Contact
+
+          <a
+            href="https://zalo.me/0817095875"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
+            Zalo
           </a>
         </div>
         <p className="text-[10px] font-bold tracking-[0.4em] text-slate-200 uppercase">
