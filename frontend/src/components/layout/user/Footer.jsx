@@ -2,12 +2,12 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-slate-100 bg-white/50 py-8 px-8 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
+    <footer className="mt-auto border-t border-slate-100 bg-white/50 py-8 px-8 flex flex-col md:flex-row items-center justify-between gap-4 transition-colors duration-300 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/50">
 
       <div className="flex items-center gap-3">
         <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
-        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">
-          © {currentYear} <span className="text-slate-900">Memo.Space</span> — Hệ thống học tập thông minh
+        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em] transition-colors duration-300 dark:text-slate-500">
+          © {currentYear} <span className="text-slate-900 transition-colors duration-300 dark:text-slate-200">Memo.Space</span> — Hệ thống học tập thông minh
         </p>
       </div>
 
@@ -22,7 +22,7 @@ const Footer = () => {
             href={link.path}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-primary hover:-translate-y-px transition-all duration-300"
+            className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-primary hover:-translate-y-px transition-all duration-300 dark:text-slate-500 dark:hover:text-primary"
           >
             {link.label}
           </a>

@@ -24,13 +24,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <aside
-      className={`fixed top-0 left-0 z-50 hidden h-screen flex-col border-r border-slate-100 bg-white py-6 transition-all duration-300 md:flex ${
+      className={`fixed top-0 left-0 z-50 hidden h-screen flex-col border-r border-slate-100 bg-white py-6 transition-all duration-300 md:flex dark:border-slate-800 dark:bg-slate-900 ${
         isOpen ? 'w-64 px-6' : 'w-24 px-4'
       }`}
     >
       <button
         onClick={toggleSidebar}
-        className="absolute top-1/2 -right-4 z-50 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md transition-all hover:bg-slate-900 hover:text-white"
+        className="absolute top-1/2 -right-4 z-50 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md transition-all hover:bg-slate-900 hover:text-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-primary dark:hover:border-primary dark:hover:text-white"
       >
         <span className="material-symbols-outlined text-[18px]">
           {isOpen ? 'chevron_left' : 'chevron_right'}
@@ -38,11 +38,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       </button>
 
       <div
-        className={`group relative mb-10 flex items-center justify-center overflow-hidden rounded-4xl bg-slate-50 py-4 transition-all duration-300 ${
+        className={`group relative mb-10 flex items-center justify-center overflow-hidden rounded-4xl bg-slate-50 py-4 transition-colors duration-300 dark:bg-slate-800/50 ${
           isOpen ? 'px-2' : 'px-0'
         }`}
       >
-        <div className="bg-primary/5 absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+        <div className="bg-primary/5 absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:bg-primary/10"></div>
         <Link to="/dashboard" className="relative z-10 flex items-center">
           <img
             src="/icons/Logo.png"
@@ -56,7 +56,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       <nav className="flex-1 space-y-2">
         <p
-          className={`mb-4 text-[10px] font-black tracking-[0.2em] whitespace-nowrap text-slate-400 uppercase transition-all duration-300 ${
+          className={`mb-4 text-[10px] font-black tracking-[0.2em] whitespace-nowrap text-slate-400 uppercase transition-all duration-300 dark:text-slate-500 ${
             isOpen ? 'px-4 opacity-100' : 'mb-0 h-0 text-center opacity-0'
           }`}
         >
@@ -76,12 +76,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 isOpen ? 'gap-4 px-5' : 'justify-center px-0'
               } ${
                 isActive
-                  ? 'translate-x-2 bg-slate-900 text-white shadow-xl shadow-slate-200'
-                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                  ? 'translate-x-2 bg-slate-900 text-white shadow-xl shadow-slate-200 dark:bg-primary/20 dark:text-primary dark:shadow-none'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white'
               }`}
             >
               {isActive && (
-                <span className="bg-primary absolute left-0 h-6 w-1 rounded-r-full"></span>
+                <span className="bg-primary absolute left-0 h-6 w-1 rounded-r-full dark:bg-primary"></span>
               )}
 
               <span
@@ -101,21 +101,21 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               </span>
 
               {!isActive && isOpen && (
-                <span className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-slate-200 opacity-0 transition-opacity group-hover:opacity-100"></span>
+                <span className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-slate-200 opacity-0 transition-opacity group-hover:opacity-100 dark:bg-slate-600"></span>
               )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto border-t border-slate-50 pt-6">
+      <div className="mt-auto border-t border-slate-50 pt-6 transition-colors duration-300 dark:border-slate-800">
         <div
-          className={`bg-primary/5 border-primary/10 group relative overflow-hidden rounded-4xl border transition-all duration-300 ${
+          className={`bg-primary/5 border-primary/10 group relative overflow-hidden rounded-4xl border transition-colors duration-300 dark:bg-primary/10 dark:border-primary/20 ${
             isOpen ? 'p-5' : 'p-3'
           }`}
         >
           {isOpen && (
-            <div className="text-primary/10 absolute -right-4 -bottom-4 rotate-12 text-6xl font-black italic transition-transform duration-500 group-hover:rotate-0">
+            <div className="text-primary/10 absolute -right-4 -bottom-4 rotate-12 text-6xl font-black italic transition-transform duration-500 group-hover:rotate-0 dark:text-primary/20">
               !
             </div>
           )}
@@ -131,7 +131,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <button
             onClick={handleReviewClick}
             title={!isOpen ? 'Bắt đầu học' : ''}
-            className={`hover:bg-primary hover:shadow-primary/30 relative z-10 flex w-full items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-200 transition-all active:scale-95 ${
+            className={`hover:bg-primary hover:shadow-primary/30 relative z-10 flex w-full items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-200 transition-all active:scale-95 dark:bg-primary dark:shadow-none dark:hover:bg-primary-container ${
               isOpen ? 'gap-2 py-3.5' : 'py-3'
             }`}
           >
