@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from 'recharts';
 import Loading from '../../components/common/Loading';
 import adminApi from '../../api/admin.api';
 
@@ -207,8 +215,12 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-        <div className="flex min-h-125 flex-col rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-sm lg:col-span-8">
+      {/* CHÚ Ý: Đã thêm items-start vào đây */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
+        
+        {/* CỘT TRÁI: NHẬT KÝ HỆ THỐNG */}
+        {/* Đã xóa min-h-125, thêm h-fit */}
+        <div className="flex flex-col rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-sm lg:col-span-8 h-fit">
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h3 className="text-xl font-black tracking-tight text-slate-900">
@@ -275,7 +287,6 @@ const AdminDashboard = () => {
               <button
                 onClick={() => {
                   setCurrentPage((prev) => Math.max(prev - 1, 1));
-                  window.scrollTo({ top: 400, behavior: 'smooth' });
                 }}
                 disabled={currentPage === 1}
                 className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-100 font-black transition-all hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-20"
@@ -289,7 +300,6 @@ const AdminDashboard = () => {
                     key={i}
                     onClick={() => {
                       setCurrentPage(i + 1);
-                      window.scrollTo({ top: 400, behavior: 'smooth' });
                     }}
                     className={`h-10 w-10 rounded-xl text-xs font-black transition-all ${
                       currentPage === i + 1
@@ -305,7 +315,6 @@ const AdminDashboard = () => {
               <button
                 onClick={() => {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-                  window.scrollTo({ top: 400, behavior: 'smooth' });
                 }}
                 disabled={currentPage === totalPages}
                 className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-100 font-black transition-all hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-20"
@@ -316,34 +325,82 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        <div className="relative flex min-h-125 flex-col justify-between overflow-hidden rounded-[2.5rem] bg-slate-900 p-10 text-white shadow-2xl lg:col-span-4">
-          <div className="absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full bg-indigo-500/10 blur-[100px]"></div>
-          <div className="relative z-10">
-            <h3 className="mb-6 text-2xl font-black tracking-tight">
-              Thông báo
-            </h3>
-            <div className="space-y-4">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-                <p className="text-sm font-bold text-indigo-300">
-                  Tính năng Kiểm duyệt
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-400">
-                  Sử dụng công cụ Kho bộ thẻ để quản lý nội dung cộng đồng.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-                <p className="text-sm font-bold text-emerald-400">
-                  Trạng thái Server
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-400">
-                  Hoạt động bình thường. Database ổn định.
-                </p>
-              </div>
+        {/* CỘT PHẢI: CẤU TRÚC DỮ LIỆU (BIỂU ĐỒ) */}
+        {/* Đã thêm h-fit, sticky và top-8 */}
+        <div className="flex flex-col rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-sm lg:col-span-4 h-fit sticky top-8">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-black tracking-tight text-slate-900">
+                Cấu trúc dữ liệu
+              </h3>
+              <p className="mt-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                Data Distribution
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+              📊
             </div>
           </div>
-          <button className="relative z-10 mt-8 w-full rounded-2xl bg-white py-4 text-xs font-black tracking-widest text-slate-900 uppercase transition-all hover:bg-indigo-600 hover:text-white active:scale-95">
-            Cấu hình hệ thống
-          </button>
+
+          <div className="h-80 w-full grow">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Người dùng', value: stats.totalUsers, color: '#4F46E5' },
+                    { name: 'Bộ thẻ', value: stats.totalDecks, color: '#10B981' },
+                    { name: 'Thẻ học', value: stats.totalCards, color: '#F59E0B' },
+                  ]}
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={8}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {[
+                    '#4F46E5', // Indigo
+                    '#10B981', // Emerald
+                    '#F59E0B', // Amber
+                  ].map((color, index) => (
+                    <Cell key={`cell-${index}`} fill={color} className="outline-none" />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: '16px',
+                    border: 'none',
+                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                />
+                <Legend
+                  verticalAlign="bottom"
+                  align="center"
+                  iconType="circle"
+                  formatter={(value) => (
+                    <span className="text-[10px] font-black uppercase text-slate-500 ml-1">
+                      {value}
+                    </span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 transition-all hover:bg-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500"></div>
+                <span className="text-xs font-black uppercase text-slate-600">
+                  Server Status
+                </span>
+              </div>
+              <span className="rounded-lg bg-emerald-100 px-2 py-1 text-[10px] font-bold text-emerald-600">
+                ONLINE
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
