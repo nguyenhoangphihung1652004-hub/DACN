@@ -269,7 +269,9 @@ const ManageUsers = () => {
               {stats.activeRate}%
             </h4>
           </div>
-          <div className="h-12 w-12 animate-[spin_3s_linear_infinite] rounded-full border-[6px] border-emerald-500 border-t-transparent"></div>
+          <div className="animate-pulse text-4xl transition-transform duration-500 group-hover:scale-125">
+            🔥
+          </div>
         </div>
 
         <div className="group flex items-center justify-between rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">

@@ -367,7 +367,9 @@ const ManageDecks = () => {
               {stats.publicRate}%
             </h4>
           </div>
-          <div className="h-12 w-12 animate-[spin_3s_linear_infinite] rounded-full border-[6px] border-emerald-500 border-t-transparent"></div>
+          <div className="text-4xl opacity-30 transition-transform duration-500 group-hover:scale-125 group-hover:rotate-12">
+            🌍
+          </div>
         </div>
         <div className="group flex items-center justify-between rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
           <div>
@@ -444,16 +446,18 @@ const ManageDecks = () => {
                           </p>
                           {card.front_image_url && (
                             <div className="mt-3 h-20 w-32 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
-                              <img 
-                                src={card.front_image_url} 
-                                alt="Front" 
+                              <img
+                                src={card.front_image_url}
+                                alt="Front"
                                 className="h-full w-full object-cover"
-                                onError={(e) => e.target.style.display = 'none'}
+                                onError={(e) =>
+                                  (e.target.style.display = 'none')
+                                }
                               />
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="flex flex-col border-slate-100 md:border-l md:pl-4">
                           <span className="text-[9px] font-black text-emerald-400 uppercase">
                             Mặt sau
@@ -463,11 +467,13 @@ const ManageDecks = () => {
                           </p>
                           {card.back_image_url && (
                             <div className="mt-3 h-20 w-32 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
-                              <img 
-                                src={card.back_image_url} 
-                                alt="Back" 
+                              <img
+                                src={card.back_image_url}
+                                alt="Back"
                                 className="h-full w-full object-cover"
-                                onError={(e) => e.target.style.display = 'none'}
+                                onError={(e) =>
+                                  (e.target.style.display = 'none')
+                                }
                               />
                             </div>
                           )}
